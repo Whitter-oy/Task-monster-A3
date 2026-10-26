@@ -27,6 +27,23 @@ uv run streamlit run app.py
 进度仅保留在当前会话，尚未实现磁盘保存。
 真实用户试用和截图仍待完成；当前版本不是最终提交版。
 
+## 每次上传的自动检查
+
+GitHub Actions 会在每次 push、pull request 和手动触发时运行：安装锁定依赖、检查 Python 语法、测试核心互动与错误处理。
+在仓库的 [Actions 页面](https://github.com/Whitter-oy/Task-monster-A3/actions) 查看结果。
+这是项目自己的程序检查，不是课程评分；通过不代表已完成用户试用或全部提交要求。
+
+在本地复现检查：
+
+```bash
+cd task-monster
+uv sync --locked
+uv run --locked python -m compileall -q app.py tests
+uv run --locked python -m unittest discover -s tests -v
+```
+
+如果终端已经位于 task-monster 文件夹，跳过第一行。
+
 ## 开发记录
 
 从当前原型开始保留真实 Git 提交。后续每次完成并验证一个有意义的修改后提交，在 GitHub 连接可用时推送。

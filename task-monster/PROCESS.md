@@ -35,6 +35,19 @@
 
 从第一阶段现有原型建立初始提交，后续在每次完成并验证实际修改后提交，并在 GitHub 连接可用时推送。提交信息描述具体变化，不虚构先前版本或用户试用记录。
 
+## 加入持续检查
+
+用户提出希望像 A2 一样每次上传后自动检查。核对了 A2 的工作流和 sd5913/pfad 2026 分支的课程检查脚本；该脚本当前仅支持 A1 和 A2，因此没有直接将参数改为 3。
+使用 Codex 辅助编写了本项目的 GitHub Actions 工作流和可重复运行的 unittest / Streamlit AppTest 测试。
+测试覆盖空输入、完成与撤销后的进度、通关后撤销、删除步骤后的按钮对应，以及确认清空后新建挑战。
+保留真实用户试用为单独的待办；不把程序测试通过当作设计有效或已满足全部评分要求的证据。
+
+参考：
+- A2 工作流：https://github.com/Whitter-oy/HK-rainfall-2025/blob/main/.github/workflows/check.yml
+- 课程检查脚本：https://github.com/sd5913/pfad/blob/2026/assignments/check.py
+- GitHub Python 工作流：https://docs.github.com/en/actions/tutorials/build-and-test-code/python
+- uv 与 GitHub Actions：https://docs.astral.sh/uv/guides/integration/github/
+
 ## 后续计划
 
 验证核心互动后，考虑 JSON 保存和自行设计的怪兽视觉。提交前补充截图、试用记录与最终限制说明。

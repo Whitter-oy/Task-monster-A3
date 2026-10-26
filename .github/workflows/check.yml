@@ -1,0 +1,35 @@
+name: Task Monster checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  interaction:
+    name: Core interaction
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: task-monster
+    env:
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9
+        with:
+          version: "0.12.12"
+      - name: Install Python
+        run: uv python install
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Check Python syntax
+        run: uv run --locked python -m compileall -q app.py tests
+      - name: Test interaction and error handling
+        run: uv run --locked python -m unittest discover -s tests -v
