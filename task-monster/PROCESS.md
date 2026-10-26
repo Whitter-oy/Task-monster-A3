@@ -42,6 +42,8 @@
 测试覆盖空输入、完成与撤销后的进度、通关后撤销、删除步骤后的按钮对应，以及确认清空后新建挑战。
 保留真实用户试用为单独的待办；不把程序测试通过当作设计有效或已满足全部评分要求的证据。
 
+首次云端运行在准备环境时失败，原因是 setup-uv@v9 无法解析，尚未执行项目测试。根据官方 GitHub Releases 查询结果，将安装动作修正为已发布的 v10.3.2。保留首次失败记录，后续查看修复后的运行结果。
+
 参考：
 - A2 工作流：https://github.com/Whitter-oy/HK-rainfall-2025/blob/main/.github/workflows/check.yml
 - 课程检查脚本：https://github.com/sd5913/pfad/blob/2026/assignments/check.py
