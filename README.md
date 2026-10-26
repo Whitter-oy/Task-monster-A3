@@ -27,13 +27,9 @@ uv run streamlit run app.py
 进度仅保留在当前会话，尚未实现磁盘保存。
 真实用户试用和截图仍待完成；当前版本不是最终提交版。
 
-## 每次上传的自动检查
+## 本地验证（可选）
 
-GitHub Actions 会在每次 push、pull request 和手动触发时运行：安装锁定依赖、检查 Python 语法、测试核心互动与错误处理。
-在仓库的 [Actions 页面](https://github.com/Whitter-oy/Task-monster-A3/actions) 查看结果。
-这是项目自己的程序检查，不是课程评分；通过不代表已完成用户试用或全部提交要求。
-
-在本地复现检查：
+开发时可以在本地检查语法和核心互动。这是辅助测试，不是老师提供的 A3 检查，也不是额外提交要求；当前没有配置每次上传后自动运行的工作流。
 
 ```bash
 cd task-monster

@@ -27,16 +27,15 @@ uv run streamlit run app.py
 - 完成情况由用户自己确认；没有计时、AI、账号或排行榜。
 - 怪兽使用系统 emoji，外观会因设备而异。
 
-## 自动检查
+## 本地验证（可选）
 
-每次上传 GitHub 后，Actions 会安装锁定依赖、检查语法，并运行 tests/test_app.py 的互动测试。
-本地在本目录运行：
+开发时可以在本目录手动运行 tests/test_app.py 的互动测试：
 
 ```bash
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-自动检查不能代替真实用户试用，也不代表老师的评分。
+当前没有每次上传后自动运行的工作流。这些本地测试不能代替真实用户试用，也不代表老师的评分。
 
 ## 提交前待完成
 
