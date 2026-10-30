@@ -7,6 +7,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 CATEGORIES = {
     "Study": ("Night Owl", "owl", "#ad91ff", "#413366"),
@@ -56,12 +57,13 @@ def validate_inputs(title, step_titles, category, minimum_steps=2):
     return title, steps, category
 
 
-def create_task(title, step_titles, category="Auto-detect"):
+def create_task(title, step_titles, category="Auto-detect", due_at=None):
     title, steps, category = validate_inputs(title, step_titles, category)
+    due_at = normalize_deadline(due_at)
     return {
         "id": uuid4().hex, "title": title, "category": category,
         "steps": [{"title": s, "done": False} for s in steps],
-        "created_at": datetime.now(timezone.utc).isoformat(), "completed_at": None,
+        "created_at": datetime.now(timezone.utc).isoformat(), "completed_at": None, "due_at": due_at,
     }
 
 
@@ -114,6 +116,8 @@ def load_tasks(path):
                 if not isinstance(step, dict) or not isinstance(step.get("title"), str) or type(step.get("done")) is not bool:
                     raise ValueError("invalid step")
             task["category"] = normalize_category(task.get("category"))
+            if "due_at" in task:
+                task["due_at"] = normalize_deadline(task["due_at"])
             # Keep single-step quests saved by older releases usable.
             validate_inputs(task["title"], [s["title"] for s in task["steps"]], task["category"], minimum_steps=1)
         return tasks, None
@@ -137,3 +141,25 @@ def save_tasks(path, tasks):
 
 def ordered_steps(task):
     return sorted(enumerate(task["steps"]), key=lambda item: (item[1]["done"], item[1].get("completed_at") or "", item[0]))
+
+
+def normalize_deadline(value):
+    if value is None:
+        return None
+    try:
+        due = datetime.fromisoformat(value)
+        if due.tzinfo is None or due.utcoffset() is None:
+            raise ValueError("timezone required")
+        return due.astimezone(timezone.utc).isoformat()
+    except (ValueError, TypeError):
+        raise ValueError("Choose a valid deadline date and time with a timezone.") from None
+
+
+def deadline_details(task, now=None):
+    value = task.get("due_at")
+    if not value:
+        return "No deadline set", False
+    due = datetime.fromisoformat(value)
+    overdue = due < (now or datetime.now(timezone.utc))
+    local = due.astimezone(ZoneInfo("Asia/Hong_Kong"))
+    return local.strftime("%d %b %Y · %H:%M HKT"), overdue

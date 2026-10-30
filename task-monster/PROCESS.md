@@ -113,6 +113,14 @@ At the author's request, square navigation tiles now use the original purple/gol
 
 The unlocked summon action now precedes its steps/level/HP summary, followed by the draft step cards. Major interface headings use uppercase via presentation styles; saved task names are preserved. Updated home, creation and collection screenshots use fictional tasks.
 
+## Supplied character artwork and optional quest deadlines
+
+On 31 October 2026 the author supplied a transparent group portrait and six finished monster PNGs. These now replace the code-drawn monster bodies across the home banner, quest cards, battles, collection, recaps and victory dialog. Original navigation and feedback icons remain. The assets were resized for phone display and converted to transparent WebP; the supplied designs were not regenerated. Source filenames and SHA-256 hashes are recorded in assets/monsters/SOURCES.json. The author has not specified the generation tool used for those supplied images, so this process does not invent an AI-image provenance claim. Runtime tilt, dimming, sweat and sparkle overlays provide damage/victory feedback while using the supplied illustrations.
+
+The new optional date/time controls appear immediately beneath Quest Name. The selected local deadline is interpreted in Asia/Hong_Kong, normalized to UTC in JSON, then shown in HKT on each active quest card. Overdue tasks are labelled without preventing their creation. Missing deadlines on older saves display No deadline set. Malformed stored deadlines are rejected without overwriting the original save.
+
+Seventeen Python/AppTest checks passed, including deadline widget entry, UTC conversion, save/reload, active-card formatting, overdue status, invalid input and legacy compatibility. Browser checks exercised the calendar and time controls, verified all supplied species and inspected the HKT deadline/overdue cards. All demonstration data is fictional; no independent user trial is claimed.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

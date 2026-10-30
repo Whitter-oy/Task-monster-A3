@@ -329,3 +329,15 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 .party-slime { width:89px; left:-6px; bottom:-2px; transform:rotate(-10deg); z-index:5; }
 .party-dragon { width:119px; left:36px; bottom:-12px; transform:rotate(5deg); z-index:6; }
 @media(max-width:360px){.hero-party{width:144px;right:-10px;height:162px}.party-golem{width:66px;left:33px}.party-ghost{width:65px}.party-owl{width:73px;left:-5px}.party-plant{width:72px;top:58px}.party-slime{width:76px}.party-dragon{width:104px;left:24px}.hero h2{font-size:var(--heading)}.hero p{max-width:53%}}
+
+/* Uploaded transparent artwork replaces the generated character layers. */
+.hero-group { width:178px; height:178px; right:-7px; bottom:-5px; }
+.hero-group>svg { display:block; width:100%; height:100%; }
+.quest-banner { min-height:195px; }
+.quest-deadline { position:relative; margin-top:16px; padding-top:8px; border-top:1px solid #ffffff28; display:flex; flex-direction:column; gap:3px; }
+.quest-deadline span { font-size:var(--caption); color:#bcaacf; }
+.quest-deadline strong { font-size:var(--small); color:#ffe3a6; line-height:1.4; }
+.quest-deadline.overdue strong,.quest-deadline.overdue span { color:#ffb0a8; }
+[data-testid="stDateInput"] input,[data-testid="stTimeInput"] input { font:400 var(--small) GameFont,sans-serif; color:var(--ink); min-width:0; }
+[data-testid="stDateInput"] [data-baseweb="input"],[data-testid="stTimeInput"] [data-baseweb="input"] { background:#181725; border:2px solid #22182d; border-radius:10px; }
+@media(max-width:360px){.hero-group{width:145px;height:165px;right:-9px;bottom:-4px}}

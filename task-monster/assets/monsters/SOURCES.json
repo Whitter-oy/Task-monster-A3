@@ -1,0 +1,40 @@
+{
+  "credit": "Artwork supplied by the project author on 31 October 2026. The author has not specified the image-generation tool. WebP assets preserve the supplied designs and transparency; originals remain with the author.",
+  "images": [
+    {
+      "asset": "group.webp",
+      "source": "monster-card-group.png",
+      "source_sha256": "01b8c3c210c3e195f435b51b3564ed6506c42be1229c925fb463986127882ccc"
+    },
+    {
+      "asset": "forest-sprout.webp",
+      "source": "exec-1d811829-4774-4eb5-aa75-1166f9050577.png",
+      "source_sha256": "34152d2aa5cd9e6ccdc66499c1bad96ce3dc7852ae949756001890b1c36d1d97"
+    },
+    {
+      "asset": "ember-dragon.webp",
+      "source": "exec-5ea82eee-5649-4570-8f0e-83f3729c8a7e.png",
+      "source_sha256": "f42c82dbe660cef03b9368e04905bcd211f851a08520effbd7ae95b2422f5553"
+    },
+    {
+      "asset": "night-owl.webp",
+      "source": "exec-28c140a1-89b0-466c-b713-01c205eacdcb.png",
+      "source_sha256": "08bcb9a11d80c260496d5d556bbcbfe723469bf73d3029c6b5bda25b4ee29c10"
+    },
+    {
+      "asset": "clockwork-golem.webp",
+      "source": "exec-238f8a2f-a3bb-4f93-b148-40c29ec80ea6.png",
+      "source_sha256": "e5ba51f5ccc3f287491b7051b0d329f187032d5ec0f3d9bbcfd27c63038f3158"
+    },
+    {
+      "asset": "muse-ghost.webp",
+      "source": "exec-999f0781-ca77-40c9-a8e9-c2bf888ed554.png",
+      "source_sha256": "bdcbeb00c7cb86617747128aad92ec26ce52f2d166d33b9a952f79bd6b7384a2"
+    },
+    {
+      "asset": "stardust-slime.webp",
+      "source": "exec-f503df04-c751-4fa7-a1a1-216899998095.png",
+      "source_sha256": "476b47bad6624bc340cf41d25a185656ee24132f4f380ac3a3fa85a342187b58"
+    }
+  ]
+}

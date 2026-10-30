@@ -3,13 +3,13 @@ import json
 import base64
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, time
 from zoneinfo import ZoneInfo
 
 import streamlit as st
 
-from art import monster_svg, navigation_svg, gem_svg, star_svg, remove_svg
-from game import CATEGORIES, category_for, completed_count, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, normalize_category, gem_balance, ordered_steps
+from art import monster_group_svg, monster_svg, navigation_svg, gem_svg, star_svg, remove_svg
+from game import CATEGORIES, category_for, completed_count, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, normalize_category, gem_balance, ordered_steps, deadline_details
 
 ROOT = Path(__file__).resolve().parent
 DATA_FILE = Path(os.environ.get("TASK_MONSTER_DATA_FILE", ROOT / "local_data" / "tasks.json"))
@@ -108,7 +108,7 @@ page = st.session_state.page
 if page == "home":
     markup('<div class="page-heading"><h1>Quest board</h1><span>QUEST BOARD</span></div>')
     with st.container(key="hero_card"):
-        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-party"><span class="party-golem">{monster_svg("Work", "hero-golem")}</span><span class="party-ghost">{monster_svg("Creative", "hero-ghost")}</span><span class="party-slime">{monster_svg("Other", "hero-slime")}</span><span class="party-owl">{monster_svg("Study", "hero-owl")}</span><span class="party-plant">{monster_svg("Life", "hero-plant")}</span><span class="party-dragon">{monster_svg("Fitness", "hero")}</span></div></div>')
+        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-party hero-group">{monster_group_svg()}</div></div>')
         if st.button("Summon a new quest", type="primary", use_container_width=True):
             navigate("create")
             st.rerun()
@@ -121,13 +121,20 @@ if page == "home":
             name, _, color, shade = CATEGORIES[task["category"]]
             hp, maximum = health(task)
             ratio = hp / maximum
+            due_label, overdue = deadline_details(task)
             with st.container(key=f"quest_{task['id']}"):
-                markup(f'<div class="quest-banner" style="--accent:{color};--shade:{shade}"><span class="tag">{esc(task["category"])} / {name}</span><span class="level">Lv. {len(task["steps"]):02d}</span><h3>{esc(task["title"])}</h3><div class="monster-mini">{monster_svg(task["category"],task["title"],1-ratio)}</div><div class="hp-line"><div class="hp-track"><div class="hp-fill" style="width:{ratio*100}%"></div></div><div class="hp-label"><span>HP {hp} / {maximum}</span><span>{completed_count(task)}/{len(task["steps"])} steps</span></div></div></div>')
+                markup(f'<div class="quest-banner" style="--accent:{color};--shade:{shade}"><span class="tag">{esc(task["category"])} / {name}</span><span class="level">Lv. {len(task["steps"]):02d}</span><h3>{esc(task["title"])}</h3><div class="monster-mini">{monster_svg(task["category"],task["title"],1-ratio)}</div><div class="hp-line"><div class="hp-track"><div class="hp-fill" style="width:{ratio*100}%"></div></div><div class="hp-label"><span>HP {hp} / {maximum}</span><span>{completed_count(task)}/{len(task["steps"])} steps</span></div></div><div class="quest-deadline {"overdue" if overdue else ""}"><span>{"OVERDUE" if overdue else "DEADLINE"}</span><strong>{esc(due_label)}</strong></div></div>')
                 st.button("Enter battle", key=f"enter_{task['id']}", on_click=navigate, args=("battle", task["id"]), use_container_width=True)
 
 elif page == "create":
     markup('<div class="page-heading"><h1>Summon a monster</h1><span>NEW QUEST</span></div><div class="subcopy">Name your quest. Make the first step easy to start.</div>')
     title = st.text_input("Quest name", key="new_title", placeholder="e.g. Finish my A3 project", max_chars=60)
+    date_column, time_column = st.columns([2, 1])
+    with date_column:
+        due_date = st.date_input("Deadline date (HKT)", value=None, format="DD/MM/YYYY", key="new_due_date")
+    with time_column:
+        due_time = st.time_input("Time (HKT)", value=time(23, 59), step=60, disabled=due_date is None, key="new_due_time")
+    st.caption("Optional · deadlines use Hong Kong time")
     category = st.selectbox("Quest type", ["Auto-detect"] + list(CATEGORIES), key="new_category")
     with st.container(key="create_steps_panel"):
         markup('<div class="section-line"><h2>Quest steps</h2><small>At least 2 · max. 24</small></div>')
@@ -152,7 +159,10 @@ elif page == "create":
         else:
             if st.button("Summon monster", key="summon_button", type="primary", use_container_width=True):
                 try:
-                    task = create_task(title, st.session_state.draft, category)
+                    if due_date and due_time is None:
+                        raise ValueError("Choose a deadline time, or clear the deadline date.")
+                    due_at = datetime.combine(due_date, due_time, tzinfo=ZoneInfo("Asia/Hong_Kong")).isoformat() if due_date else None
+                    task = create_task(title, st.session_state.draft, category, due_at=due_at)
                 except ValueError as error:
                     st.warning(str(error))
                 else:
