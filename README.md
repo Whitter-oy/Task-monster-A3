@@ -1,18 +1,18 @@
-# Task Monster — 把待办变成一场冒险
+# Task Monster
 
-给觉得大任务难以开始的学生使用的游戏化任务工具。创建任务并拆成小步骤，每完成一步就攻击怪兽，全部完成后将怪兽收入战利品图鉴。
+**Turn to-dos into adventures.** A small, mobile-style quest tool for students who find large tasks difficult to start. Break a real task into steps, complete each step to attack a monster, and collect the monster when the whole quest is finished.
 
-## 手机游戏界面
+## Screenshots
 
-深色冒险大厅、原创怪兽、任务卡牌与底部导航，桌面浏览器也保持约 460px 的手机页面宽度。
+<img src="task-monster/assets/screenshots/home.jpg" width="220" alt="Quest board" /> <img src="task-monster/assets/screenshots/battle.jpg" width="220" alt="Monster battle" /> <img src="task-monster/assets/screenshots/gallery.jpg" width="220" alt="Monster collection" />
 
-<img src="task-monster/assets/screenshots/home.jpg" width="220" alt="任务大厅" /> <img src="task-monster/assets/screenshots/battle.jpg" width="220" alt="怪兽战斗" /> <img src="task-monster/assets/screenshots/gallery.jpg" width="220" alt="战利品图鉴" />
+These screenshots use fictional demonstration tasks and completion states. They are not evidence of a user trial.
 
-截图来自独立演示存档，任务与完成情况仅用于展示，不代表实际用户试用。
+[See the long creation page and icon dock](task-monster/assets/screenshots/create.jpg).
 
-## 运行
+## Run locally
 
-需要 Python 3.13 和 uv。在仓库根目录打开终端：
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/). From the repository root, run:
 
 ```bash
 cd task-monster
@@ -20,41 +20,43 @@ uv sync --locked
 uv run streamlit run app.py
 ```
 
-打开终端显示的本地网址，通常是 http://localhost:8501。按 Ctrl+C 停止服务。若已启动旧版，先停止再运行上述最后一行，然后刷新浏览器。
+Python 3.13 is selected by `.python-version`; `uv.lock` records exact dependency versions. Open the local URL printed in the terminal, normally http://localhost:8501. Keep the terminal running. Press **Ctrl+C** to stop the app. After updating an already running copy, stop it, run the commands again, and refresh the browser.
 
-## 主互动
+## Interaction
 
-1. 在“召唤怪兽”中输入任务名称，选择类型或让程序按关键词自动识别。
-2. 逐一添加并确认步骤。一个步骤对应一级、100 HP；创建前可以移除步骤。
-3. 大厅可同时显示多个进行中的任务，点击对应的“进入战斗”。
-4. 完成现实中的步骤后点击“出击”：扣除 100 HP、更新进度，并显示受伤反馈。误操作可以撤销。
-5. 所有步骤完成后收录到图鉴；查看战绩时仍可撤销，撤销后会移回进行中列表。
+1. Choose **Summon**, enter a quest name, and select a type or use **Auto-detect**.
+2. Add 1–24 small steps. Each step adds one monster level and 100 HP.
+3. The **Quests** screen shows all active monsters. Choose **Enter battle** for a task.
+4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Use **Undo step** after an accidental completion.
+5. Completing every step adds the monster to **Collection**. Undoing a step moves it back to active quests.
 
-## 代码与过程
+The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its bottom navigation has original vector icons and leaves space for the end of long pages.
 
-- [详细使用方法与限制](task-monster/README.md)
-- [开发过程、AI 使用和试用待办](task-monster/PROCESS.md)
-- [界面](task-monster/app.py)、[任务与存档逻辑](task-monster/game.py)、[原创怪兽绘制](task-monster/art.py)
-- [依赖声明](task-monster/pyproject.toml) 与 [锁定版本](task-monster/uv.lock)
+## Files and development
 
-## 存档与限制
+- [Detailed instructions and limitations](task-monster/README.md)
+- [Process, decisions, AI use and user-trial status](task-monster/PROCESS.md)
+- [Interface](task-monster/app.py), [task and storage logic](task-monster/game.py), [original vector art](task-monster/art.py)
+- [Dependency metadata](task-monster/pyproject.toml) and [lockfile](task-monster/uv.lock)
 
-任务自动保存至本机 `task-monster/local_data/tasks.json`，已加入 Git 忽略规则，不上传真实任务。刷新后可继续使用。
-这是单人本地原型，没有账号或云同步；同一个服务上的不同浏览器共享本机存档，请避免同时编辑。不要直接作为多人在线服务部署。
-自动识别使用本地关键词与确定性规则，无 AI API。六种怪兽具有按任务名称变化的装饰，同类任务可能拥有相似外形。
-每步伤害相同，不判断真实任务是否完成；XP 由已完成步骤计算，撤销也会回退。
+## Storage and limitations
 
-## 本地验证（可选）
+Progress is saved to `task-monster/local_data/tasks.json`. This directory is ignored by Git, so personal tasks are not uploaded. Existing category names from the first prototype are migrated to English; user-entered task names and step text are preserved as written.
 
-在 task-monster 目录运行：
+This is a single-user local prototype, with one shared save file per server. It has no accounts, cloud sync or concurrent-edit protection. Different browsers connected to the same server share that file. Quest classification uses local English keywords and deterministic rules, not an AI service. Six species are available; similar tasks may have similar monsters. All steps deal equal damage, and the app relies on the player to report real completion. XP equals completed steps × 10 and decreases when a completion is undone.
+
+## Optional local verification
+
+From the `task-monster` directory:
 
 ```bash
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-没有 GitHub 自动检查工作流。程序测试不代替真实用户试用或老师评分。
+There is no GitHub automatic-check workflow. Program tests do not replace a real user trial or the marker's judgement.
 
-## Credits 与提交进度
+## Credits and submission status
 
-Python 和 Streamlit 概念参考 SD5913 课堂。怪兽由原创 SVG 代码绘制，系统字体和符号用于界面；用户提供的手机游戏截图仅作为风格参考，未复制其中角色或素材。使用 Codex 辅助编程与设计，决定与修改记录见 PROCESS。
-真实用户试用仍待进行。Git 历史保留每次实际修改；截图、程序验证不算用户试用。
+Python lists, dictionaries, functions, state and Streamlit concepts build on SD5913 classroom material. Monster and navigation artwork is original SVG generated by code. The interface uses system fonts. Game screenshots supplied by the project author informed visual direction; their characters, icons and other assets were not copied. Codex assisted with design, code, testing and documentation; see PROCESS for decisions and revisions.
+
+A real trial with at least one other person and the resulting observation-based decision still need to be recorded before submission. Git history records actual revisions.

@@ -1,60 +1,57 @@
-# Task Monster · 任务冒险
+# Task Monster · Quest Adventure
 
-给难以开始大任务的学生使用的游戏化任务工具。任务是怪兽，步骤是攻击，完成真实任务后收集怪兽卡牌。
+A game-inspired task tool for students who need help starting large tasks. A task becomes a monster, its steps become attacks, and a completed task becomes a collectible card.
 
-## 运行
+## Run
 
-在本文件所在目录运行：
+Open a terminal in this directory:
 
 ```bash
 uv sync --locked
 uv run streamlit run app.py
 ```
 
-打开终端显示的网址（通常是 http://localhost:8501），按 Ctrl+C 停止。如果是旧版本服务，先停止、重新运行，再刷新页面。
-需要 Python 3.13；`.python-version` 指定版本，`uv.lock` 锁定依赖。
+Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C to stop. To update a running app, stop it, run the commands again, and refresh the browser. Python 3.13 is selected in `.python-version`; `uv.lock` records dependencies.
 
-## 玩法
+## Play
 
-- **任务大厅**：显示多个进行中的任务，各有怪兽、等级、血量和进度，点击“进入战斗”。
-- **召唤怪兽**：输入任务名；按关键词自动识别类型，或手动选择学习、工作、运动、生活、创作、其他。输入步骤后逐个点击添加，再召唤。
-- **等级**：步骤数就是等级；每步对应 100 HP。任务支持 1–24 个步骤。
-- **战斗**：现实中完成一步后出击，播放扣血和受伤反馈；低血量时表情变化。误点可撤销。
-- **战利品**：完成全部步骤后怪兽加入图鉴。查看战绩仍可撤销，撤销会让任务重新出现在大厅。
-- **放弃**：战斗页“任务管理”内需先勾选确认，只移除当前任务。
+- **Quests:** browse active monsters, level, health and progress, then select **Enter battle**.
+- **Summon:** name a task, select a type or use keyword-based **Auto-detect**, and add steps one by one.
+- **Level and health:** a quest has 1–24 steps. Each step adds one level and 100 HP.
+- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. A weakened monster changes expression. Use **Undo step** if needed.
+- **Collection:** completed quests appear as cards. **View quest** opens the steps; undoing completion returns the quest to the board.
+- **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
 
-## 截图
+## Screenshots
 
-下面使用独立演示存档，不是实际用户试用数据。
+Fictional demonstration tasks, not records of user testing:
 
-<img src="assets/screenshots/home.jpg" width="220" alt="手机任务大厅" /> <img src="assets/screenshots/battle.jpg" width="220" alt="怪兽战斗" /> <img src="assets/screenshots/gallery.jpg" width="220" alt="怪兽图鉴" />
+<img src="assets/screenshots/home.jpg" width="220" alt="Quest board" /> <img src="assets/screenshots/battle.jpg" width="220" alt="Monster battle" /> <img src="assets/screenshots/gallery.jpg" width="220" alt="Monster collection" />
 
-## 本机保存和错误处理
+[Long creation page and icon dock](assets/screenshots/create.jpg).
 
-自动保存至 `local_data/tasks.json`，不会提交到 GitHub。刷新或重新打开会读取存档。
-空任务、空步骤或超过步骤上限时显示提示。损坏或不支持的存档不会自动覆盖；先停止服务、备份原文件，修复或移走它后重新启动并刷新页面。
-写入失败时显示提示，当前会话可以继续。每次保存用临时文件替换，避免中断留下半份 JSON。
+## Storage and errors
 
-## 已知限制
+Tasks save automatically to `local_data/tasks.json`, which is ignored by Git. Reopening reads this file. Legacy category identifiers are converted to English without changing user-entered text.
 
-这是单人、本机、单一存档的原型；不同浏览器连接同一服务会共享该文件，没有账号隔离和并发编辑保护。
-自动识别采用关键词规则，允许手动覆盖；同类型任务的物种相同，名称会影响装饰。
-任务创建后步骤不可编辑。伤害等分，不评价任务难度和完成真实性。XP 是当前已完成步骤 × 10，撤销时回退，没有付费和排行。
-手机大小由响应式 CSS 实现，不是原生手机 App。动画尊重系统减少动态效果设置。
+Empty input and too many steps produce messages. An unreadable or unsupported save is preserved. Stop the app, back up the file, repair or move it, then restart and refresh. If writing fails, the current session can continue with a warning. Atomic replacement avoids incomplete JSON after interrupted saves.
 
-## 开发验证（可选）
+## Limitations
+
+This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Task names affect decorations and types select six species. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and XP is completed steps × 10. Undo reverses XP.
+
+The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Animation respects reduced-motion preferences.
+
+## Optional local checks
 
 ```bash
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-检查多任务、血量和撤销、图鉴同步、存档恢复及损坏存档等。没有 GitHub 自动检查工作流；自动测试不能代替用户试用。
+Tests cover multiple tasks, damage, undo, collection, persistence, invalid saves and legacy migration. No GitHub automatic-check workflow is configured. Tests do not replace a real user trial.
 
-## Credits
+## Credits and next steps
 
-参考 SD5913 课堂中的 Python list/dict、函数、状态、Streamlit 和 JSON 概念。
-怪兽为 `art.py` 内的原创 SVG，界面使用系统字体与符号。用户提供的游戏截图仅作风格参考，未复制角色或素材。Codex 辅助设计、编程、测试与说明，详情见 PROCESS.md。
+The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. `art.py` contains original monster and navigation SVGs; system fonts are used. Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
 
-## 提交前待完成
-
-找至少一位真实用户试用，记录观察并据此改进或解释保留决定；补充 PROCESS.md。完成全新终端运行验证和公开仓库检查后再提交 Canvas。
+Before submission, complete a real trial with another person, record the observation and design decision, follow the run instructions from a fresh terminal, and verify signed-out access to the public repository.

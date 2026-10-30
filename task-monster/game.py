@@ -9,20 +9,30 @@ from pathlib import Path
 from uuid import uuid4
 
 CATEGORIES = {
-    "学习": ("夜读魔枭", "owl", "#ad91ff", "#413366"),
-    "工作": ("齿轮石像", "golem", "#70d9ee", "#235869"),
-    "运动": ("烈焰幼龙", "dragon", "#ff9277", "#713f4d"),
-    "生活": ("森林芽灵", "plant", "#a5e276", "#3e6147"),
-    "创作": ("灵感幽灵", "ghost", "#f5a1d6", "#66446f"),
-    "其他": ("星尘史莱姆", "slime", "#b7a1ff", "#494475"),
+    "Study": ("Night Owl", "owl", "#ad91ff", "#413366"),
+    "Work": ("Clockwork Golem", "golem", "#70d9ee", "#235869"),
+    "Fitness": ("Ember Dragon", "dragon", "#ff9277", "#713f4d"),
+    "Life": ("Forest Sprout", "plant", "#a5e276", "#3e6147"),
+    "Creative": ("Muse Ghost", "ghost", "#f5a1d6", "#66446f"),
+    "Other": ("Stardust Slime", "slime", "#b7a1ff", "#494475"),
 }
 KEYWORDS = {
-    "学习": ("学习", "作业", "考试", "复习", "课程", "读书", "study", "exam", "a3"),
-    "工作": ("工作", "邮件", "会议", "报告", "work", "email"),
-    "运动": ("跑步", "运动", "健身", "散步", "run", "gym"),
-    "生活": ("整理", "清洁", "房间", "买菜", "洗", "clean"),
-    "创作": ("设计", "画", "创作", "写", "摄影", "design", "draw"),
+    "Study": ("study", "exam", "revise", "course", "read", "homework", "a3"),
+    "Work": ("work", "email", "meeting", "report"),
+    "Fitness": ("run", "fitness", "gym", "exercise", "walk"),
+    "Life": ("clean", "room", "laundry", "groceries", "tidy"),
+    "Creative": ("design", "draw", "art", "write", "photo", "create"),
 }
+
+# Compatibility with category identifiers used by the first prototype.
+LEGACY_CATEGORIES = dict(zip(
+    ("\u5b66\u4e60", "\u5de5\u4f5c", "\u8fd0\u52a8", "\u751f\u6d3b", "\u521b\u4f5c", "\u5176\u4ed6"),
+    CATEGORIES,
+))
+
+
+def normalize_category(category):
+    return LEGACY_CATEGORIES.get(category, category)
 
 
 def category_for(title):
@@ -32,17 +42,17 @@ def category_for(title):
     return list(CATEGORIES)[int(hashlib.sha256(title.encode()).hexdigest()[:8], 16) % 6]
 
 
-def create_task(title, step_titles, category="自动识别"):
+def create_task(title, step_titles, category="Auto-detect"):
     title = title.strip()
     steps = [s.strip() for s in step_titles]
     if not title or len(title) > 60:
-        raise ValueError("请填写 1–60 字的任务名称。")
+        raise ValueError("Enter a quest name with 1–60 characters.")
     if not 1 <= len(steps) <= 24 or any(not s or len(s) > 120 for s in steps):
-        raise ValueError("请添加 1–24 个步骤，每步为 1–120 字。")
-    if category == "自动识别":
+        raise ValueError("Add 1–24 steps, each with 1–120 characters.")
+    if category == "Auto-detect":
         category = category_for(title)
     if category not in CATEGORIES:
-        raise ValueError("请选择有效的任务类型。")
+        raise ValueError("Choose a valid quest type.")
     return {
         "id": uuid4().hex, "title": title, "category": category,
         "steps": [{"title": s, "done": False} for s in steps],
@@ -91,10 +101,11 @@ def load_tasks(path):
             for step in task["steps"]:
                 if not isinstance(step, dict) or not isinstance(step.get("title"), str) or type(step.get("done")) is not bool:
                     raise ValueError("invalid step")
-            create_task(task["title"], [s["title"] for s in task["steps"]], task.get("category"))
+            task["category"] = normalize_category(task.get("category"))
+            create_task(task["title"], [s["title"] for s in task["steps"]], task["category"])
         return tasks, None
     except (OSError, ValueError, KeyError, TypeError):
-        return [], "未能读取本机存档。原文件已保留；请先备份或修复它，再重新打开。"
+        return [], "Could not read the local save. The original file is preserved. Back it up or repair it before reopening."
 
 
 def save_tasks(path, tasks):

@@ -1,71 +1,71 @@
-# 开发过程
+# Development process
 
-## 起点
+## Starting idea and first prototype
 
-希望制作一个实用且带有游戏化反馈的小工具。当前方案把任务清单和怪兽血量结合，目标是帮助学生把大任务拆成容易开始的小步骤。
+Task Monster is for students who know what they need to do but find a large task difficult to start. Breaking a task into small actions makes the next action clearer, while a monster's health provides visible progress.
 
-## 第一阶段原型
+The first version supported one task, adding/removing steps, completion and undo, health, victory and a confirmed reset. A list of dictionaries stored each step and a Boolean flag. Streamlit session state preserved values across reruns. Health was calculated from the flags rather than independently decreased, keeping undo consistent.
 
-实现任务输入、步骤添加和删除、开始挑战、完成和撤销、血量和完成进度、确认后重置。
-使用 list 和 dict 存储步骤，通过 bool 记录完成情况；使用 Streamlit session_state 保持交互时的状态。
-血量由步骤状态计算，不单独累加扣血，避免进度与血量不一致。
+Initial local AppTest checks covered empty input, button identity after deletion, completion, undo, victory and reset. These were program checks, not a user trial.
 
-## AI 使用记录
+## AI tools and decisions
 
-使用 Codex 讨论选题、对应课堂知识，并辅助生成原型代码与文档。
-当前原型采用了 AI 提出的“任务拆分与怪兽血量结合”的建议。
-早期建议包含 JSON 保存；目前暂缓这一功能，先验证当前会话中的核心互动。
-这些是当前实现的选择，学生后续需要亲自运行、理解代码，并补充自己的判断和修改。
+Codex helped discuss ideas, connect them to classroom concepts, write/refactor Python, design CSS and original SVGs, test the interaction and draft documentation.
 
-## 用户试用（待进行）
+**Kept:** a checklist connected to monster health. The action/feedback relationship is explainable: mark a step complete, recalculate health, render the new state.
 
-尚未进行真实用户试用。以下内容必须根据实际观察补充，不能把自动化测试当作用户试用。
+**Changed or rejected:** JSON persistence was postponed in the first prototype to validate the main loop, then added during the multi-task revision. Shops, paid currency and other systems shown in reference games were omitted because they distract from completing real tasks. XP is derived from currently completed steps, so repeatedly undoing and completing cannot accumulate extra rewards.
 
-- 给试用者的任务：
-- 未经讲解时，对方先做了什么：
-- 犹豫、误操作或理解困难：
-- 根据观察作出的修改，或保留设计的理由：
+The project author still needs to review and understand the code and add their own observations and final decisions. No participants or trial observations have been invented.
 
-## 第一阶段验证
+## Development history
 
-使用 Streamlit AppTest 验证了空任务和空步骤提示、删除步骤后按钮对应关系、开始挑战、完成、撤销、通关以及确认重置。所有检查通过。
-本机服务已成功启动。上述检查属于程序验证，不是实际用户试用。
+The repository started with the working prototype and documentation. Meaningful changes were saved as real commits with descriptions of the changes. The history was not backfilled to pretend earlier development happened.
 
-## 版本记录方式
+## Automatic-check experiment and removal
 
-从第一阶段现有原型建立初始提交，后续在每次完成并验证实际修改后提交，并在 GitHub 连接可用时推送。提交信息描述具体变化，不虚构先前版本或用户试用记录。
+The author asked about A2's green checks. Inspection of A2's workflow and the course checker on `sd5913/pfad`'s `2026` branch found support for A1 and A2. Codex added a separate custom workflow and local tests instead of changing the course assignment parameter to 3.
 
-## 持续检查的尝试与撤下
+The first cloud run failed because `setup-uv@v9` could not be resolved. Correcting the action version to the official release found at the time produced a passing run. The author then clarified that A3 did not require automatic checking and preferred its removal. The workflow was removed; optional local tests and the genuine commit/run history remain. No automatic GitHub check is configured.
 
-用户询问 A2 每次上传后出现的检查。核对了 A2 的工作流和 sd5913/pfad 2026 分支的课程检查脚本；该脚本当前仅支持 A1 和 A2，因此没有直接将参数改为 3。Codex 据此额外添加了自定义检查工作流。
-使用 Codex 辅助编写了本项目的 GitHub Actions 工作流和可重复运行的 unittest / Streamlit AppTest 测试。
-测试覆盖空输入、完成与撤销后的进度、通关后撤销、删除步骤后的按钮对应，以及确认清空后新建挑战。
-保留真实用户试用为单独的待办；不把程序测试通过当作设计有效或已满足全部评分要求的证据。
+References:
 
-首次云端运行在准备环境时失败，原因是 setup-uv@v9 无法解析，尚未执行项目测试。根据官方 GitHub Releases 查询结果，将安装动作修正为已发布的 v10.3.2。保留首次失败记录，后续查看修复后的运行结果。
+- [A2 workflow](https://github.com/Whitter-oy/HK-rainfall-2025/blob/main/.github/workflows/check.yml)
+- [Course checker](https://github.com/sd5913/pfad/blob/2026/assignments/check.py)
+- [GitHub Python workflows](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)
+- [uv with GitHub Actions](https://docs.astral.sh/uv/guides/integration/github/)
 
-修复后的云端检查通过。随后用户明确指出 A3 没有要求配置自动检查，希望不再额外配置。再次核对课程脚本仍只有 A1、A2 规则后，删除了自定义工作流，并更新 README。本地测试保留为可选开发工具；历史提交与运行记录保留，不会在以后每次上传时自动执行该工作流。
+## 30 October 2026: mobile game and multiple quests
 
-参考：
-- A2 工作流：https://github.com/Whitter-oy/HK-rainfall-2025/blob/main/.github/workflows/check.yml
-- 课程检查脚本：https://github.com/sd5913/pfad/blob/2026/assignments/check.py
-- GitHub Python 工作流：https://docs.github.com/en/actions/tutorials/build-and-test-code/python
-- uv 与 GitHub Actions：https://docs.astral.sh/uv/guides/integration/github/
+The author found the first interface too simple and supplied card, dungeon and gallery references. The flow became multiple quests, one monster for each, higher levels for more steps, visible damage after completing steps, and a collection of defeated monsters.
 
-## 2026-10-30：手机游戏界面与多任务迭代
+The single-task list became four screens: quest board, summon, battle and collection. Python and Streamlit were retained. `game.py` separates task and JSON logic, while `art.py` draws six original SVG species. Type selects the species and task name affects decoration; reference characters and assets were not copied.
 
-用户指出最初界面太简单，提出手机游戏方向，并提供三张卡牌、地下城与图鉴参考图。明确的新流程是：多个任务各有怪兽；步骤越多等级越高；完成步骤攻击并改变外观；击败后收录图鉴。
+Level equals the number of steps, with 100 HP per step. Local progress saves outside Git using atomic JSON replacement. Seven local checks passed for multiple tasks, health/undo, collection, session recovery, abandonment, malformed saves and SVG states. A separate browser demonstration verified health going from 300/400 to 200/400, 100/400 and 0/400, followed by collection entry.
 
-根据这个反馈，将单任务清单重构为任务大厅、创建、战斗和图鉴四个页面。沿用 Python 与 Streamlit，把任务逻辑抽到 game.py，使用 list/dict、函数、条件与 JSON。六种原创 SVG 怪兽由 art.py 绘制，名称影响装饰，任务类型决定物种；不复制参考图里的角色和素材。
+Screenshots use fictional demonstration tasks and states from a separate save file, not a real user trial. Neither demonstration saves nor personal task data is committed.
 
-采纳了游戏化视觉与图鉴的方向；没有把参考图中的商店、抽卡和付费货币照搬进来，因为本项目目的是推进真实任务。XP 直接取已完成步骤数量，撤销时回退，避免重复切换刷取奖励。等级等于步骤数，每步固定 100 点伤害。
+## 30 October 2026: English, layout and navigation corrections
 
-这次使用 Codex 辅助拆分代码、设计 CSS/SVG、加入本机 JSON 保存、更新测试和文档。页面使用约 460px 的手机宽度，在 390 × 844 视口中预览。预览时调整了标题被小字号覆盖、输入框提示对比度，以及页面切换的滚动处理。
+The author requested English throughout the submitted project. Labels, names, validation messages, documentation, test examples and screenshots were translated. Legacy task types migrate to English; user-entered titles and steps are preserved.
 
-本地七项验证通过：空输入和多任务、攻击/撤销/图鉴一致性、新会话恢复、确认放弃不影响其他任务、损坏存档不覆盖、存档结构与血量、六种 SVG 和受伤状态。另在浏览器操作演示任务，观察到血量从 300/400 降到 200/400、100/400、0/400，随后进入图鉴。
+The author supplied screenshots showing that the phone background ended while long content continued, the dock did not align with the page, and lower controls were hidden. The phone background was moved to the scrolling main container, page and dock now share a width with border-box sizing, and an explicit end spacer leaves room for the dock. Phone and desktop widths and the end of long pages are checked in the browser.
 
-截图来自独立演示存档，包含人为构造的任务和完成状态，仅用于界面展示。没有把演示操作当作真实用户试用，也没有将演示存档或个人任务提交到仓库。
+Verification: nine local regression checks passed, including migration of legacy saves and an already-open creation screen. Browser measurements at 320px and 390px phone widths and a 1280px desktop viewport found matching page/dock edges and no horizontal overflow. On desktop the phone and dock were both 460px wide at x=410. At the bottom of a three-step creation page, the final action ended above the dock; the battle footer was also reachable above it. Updated screenshots use English-only demonstration tasks.
 
-## 后续计划
+Buttons were changed to bright green and gold with highlights and raised edges. Three navigation tabs now have original SVG sword, scroll and shield icons, and a raised orange active tab. Their artwork was drawn in code rather than extracted from the supplied references.
 
-真实用户试用仍待完成。下一步请一位用户在没有讲解的情况下创建任务并完成一次出击，记录其犹豫或误操作，再作出实际改进或保留设计的决定。
+This feedback came from the project author during development. It does not replace the required trial with at least one other person.
+
+## User trial — still to complete
+
+Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.
+
+- Task given to the participant:
+- What they attempted before any explanation:
+- Where they hesitated or made a mistake:
+- Improvement made, or reason to retain the design:
+
+## Remaining submission work
+
+Complete the real user trial and observation-based decision. Run the documented commands from a fresh terminal, try the relevant error case, and verify signed-out access to the public repository before submitting its URL to Canvas.
