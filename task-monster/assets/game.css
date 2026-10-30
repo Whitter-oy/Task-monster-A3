@@ -7,7 +7,7 @@
 }
 html, body, .stApp, input, textarea, select, button,
 [data-testid="stMarkdownContainer"], [data-testid="stWidgetLabel"] {
-  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif !important;
+  font-family: GameFont, "Arial Rounded MT Bold", sans-serif !important;
   -webkit-font-smoothing: antialiased;
 }
 h1,h2,h3,p,small,strong,button span,button p { text-shadow: none !important; -webkit-text-stroke: 0 !important; }
@@ -92,7 +92,7 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 [data-testid="stTextInput"] input::placeholder { color:#a99bb8 !important; opacity:1; }
 [data-testid="stTextInputRootElement"],[data-baseweb="select"]>div { background:#181725 !important; border:1px solid #665374; border-radius:10px; color:var(--ink) !important; }
 [data-testid="stForm"] { border:0; padding:0; }
-[data-baseweb="select"],[data-baseweb="select"] span,[role="combobox"] { font-family:"Arial Rounded MT Bold","Trebuchet MS",sans-serif !important; font-size:var(--body) !important; }
+[data-baseweb="select"],[data-baseweb="select"] span,[role="combobox"] { font-family:GameFont,"Arial Rounded MT Bold",sans-serif !important; font-size:var(--body) !important; }
 [data-testid="stButton"] button:focus-visible,[data-testid="stFormSubmitButton"] button:focus-visible { outline:2px solid #d8b7ff; outline-offset:3px; }
 .st-key-step_editor [data-testid="stFormSubmitButton"] button { min-height:40px; padding:8px 6px; }
 .st-key-step_editor [data-testid="stFormSubmitButton"] button p { font-size:var(--small); }
@@ -211,3 +211,27 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 
 .st-key-step_editor [data-testid="stColumn"]:last-child { flex:0 0 78px !important; min-width:78px !important; }
 .st-key-step_editor [data-testid="stColumn"]:first-child { flex:1 1 0 !important; min-width:0 !important; }
+
+/* A locally bundled game font: one face, consistent roles, no blurry text shadows. */
+.stApp h1,.stApp h2,.stApp h3,.stApp p,.stApp strong,.stApp small,.stApp input,.stApp button { font-family:GameFont,"Arial Rounded MT Bold",sans-serif !important; font-weight:400 !important; letter-spacing:.15px; }
+.page-heading h1,.hero h2,.brand { -webkit-text-stroke:.6px #25182e !important; paint-order:stroke fill; }
+.gem-count { position:relative; min-width:90px; height:34px; padding:4px 13px 4px 34px; border:0; border-radius:7px 19px 19px 7px; background:linear-gradient(#171324,#30263d); box-shadow:inset 0 2px 3px #0f0a1b70,0 1px #84718e40; justify-content:center; }
+.gem-count .gem { position:absolute; width:38px; height:38px; left:-8px; top:-3px; filter:drop-shadow(0 3px 1px #0c081980); transform:rotate(-8deg); }
+.gem-count strong { font-size:var(--heading); color:#fff5e2; }
+.st-key-active_quests_panel,.st-key-battle_steps_panel { padding:12px; gap:18px !important; border:3px solid #17111e; border-radius:17px; background:linear-gradient(135deg,#514056,#362b42); box-shadow:inset 0 0 0 2px #977594,inset 0 -5px #281f33,0 5px #110d19; }
+.st-key-active_quests_panel>.stElementContainer,.st-key-battle_steps_panel>.stElementContainer { min-width:0; }
+.st-key-active_quests_panel .section-line,.st-key-battle_steps_panel .section-line { margin:0; padding:5px 2px 12px; border:0; border-bottom:2px solid #251c30; border-radius:0; background:none; box-shadow:0 1px #a27e9d45; }
+.st-key-battle_steps_panel [class*="st-key-step_"] { border-width:2px; padding:10px; background:linear-gradient(#3c3149,#2d263b); box-shadow:inset 0 1px #786180,0 3px #241a2c; }
+.st-key-battle_steps_panel [data-testid="stColumn"]:last-child { min-width:67px !important; }
+[class*="st-key-attack_"] button:not([kind="primary"]) { height:36px; min-height:36px; display:flex; align-items:center; justify-content:center; padding:0 7px; border:2px solid #241d30 !important; border-radius:10px; color:#f5e9ff; background:linear-gradient(#8a7d9c,#5b506e); box-shadow:inset 0 2px #c4b6d0,0 3px #302637; }
+[class*="st-key-attack_"] button:not([kind="primary"]) p { margin:0 !important; padding:0 !important; width:100%; text-align:center; line-height:1 !important; }
+.st-key-audio_engine { display:none; }
+.sound-controls { width:100%; box-sizing:border-box; display:flex; justify-content:flex-end; gap:7px; padding-top:9px; }
+.sound-controls button { font:400 11px GameFont,sans-serif; color:#cdbddd; background:#30253e; border:1px solid #78618c; border-radius:8px; padding:5px 8px; cursor:pointer; box-shadow:inset 0 1px #a78bb044,0 2px #181020; }
+.sound-controls button[aria-pressed="true"] { color:#ffe6a1; border-color:#b69055; background:#49374c; }
+.sound-controls button:focus-visible { outline:2px solid #e8b8ff; outline-offset:3px; }
+@media(max-width:360px){.st-key-active_quests_panel,.st-key-battle_steps_panel{padding:9px}.quest-banner h3{max-width:61%}.monster-mini{width:108px}.gem-count{min-width:70px;padding-right:10px}.brand{font-size:var(--body)}}
+/* Stick the wrapper, rather than a child constrained by a one-item wrapper. */
+.stMainBlockContainer > div > div:has(> .st-key-wallet_hud) { position:sticky; top:0; z-index:80; background:#222133f7; }
+.st-key-wallet_hud { position:static !important; gap:4px !important; padding-top:12px; padding-bottom:8px; }
+.sound-controls { padding-top:0; min-height:24px; }
