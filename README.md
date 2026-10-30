@@ -1,10 +1,18 @@
-# Assignment 3 — Task Monster
+# Task Monster — 把待办变成一场冒险
 
-一个面向学生的游戏化任务清单：把大任务拆成小步骤，完成一步就降低怪兽血量，全部完成后驯服怪兽。
+给觉得大任务难以开始的学生使用的游戏化任务工具。创建任务并拆成小步骤，每完成一步就攻击怪兽，全部完成后将怪兽收入战利品图鉴。
 
-## 运行第一阶段原型
+## 手机游戏界面
 
-需要安装 uv。在仓库根目录运行：
+深色冒险大厅、原创怪兽、任务卡牌与底部导航，桌面浏览器也保持约 460px 的手机页面宽度。
+
+<img src="task-monster/assets/screenshots/home.jpg" width="220" alt="任务大厅" /> <img src="task-monster/assets/screenshots/battle.jpg" width="220" alt="怪兽战斗" /> <img src="task-monster/assets/screenshots/gallery.jpg" width="220" alt="战利品图鉴" />
+
+截图来自独立演示存档，任务与完成情况仅用于展示，不代表实际用户试用。
+
+## 运行
+
+需要 Python 3.13 和 uv。在仓库根目录打开终端：
 
 ```bash
 cd task-monster
@@ -12,35 +20,41 @@ uv sync --locked
 uv run streamlit run app.py
 ```
 
-打开终端显示的本地网址，通常是 http://localhost:8501。按 Ctrl+C 停止服务。
+打开终端显示的本地网址，通常是 http://localhost:8501。按 Ctrl+C 停止服务。若已启动旧版，先停止再运行上述最后一行，然后刷新浏览器。
 
-## 项目文件
+## 主互动
 
-- [使用方法、限制和来源](task-monster/README.md)
-- [开发过程与 AI 使用记录](task-monster/PROCESS.md)
-- [Python 源代码](task-monster/app.py)
-- [依赖声明](task-monster/pyproject.toml) 和 [锁定版本](task-monster/uv.lock)
+1. 在“召唤怪兽”中输入任务名称，选择类型或让程序按关键词自动识别。
+2. 逐一添加并确认步骤。一个步骤对应一级、100 HP；创建前可以移除步骤。
+3. 大厅可同时显示多个进行中的任务，点击对应的“进入战斗”。
+4. 完成现实中的步骤后点击“出击”：扣除 100 HP、更新进度，并显示受伤反馈。误操作可以撤销。
+5. 所有步骤完成后收录到图鉴；查看战绩时仍可撤销，撤销后会移回进行中列表。
 
-## 当前状态
+## 代码与过程
 
-第一阶段核心互动已完成：创建任务、添加或删除步骤、完成或撤销、更新血量、通关、确认重置。
-进度仅保留在当前会话，尚未实现磁盘保存。
-真实用户试用和截图仍待完成；当前版本不是最终提交版。
+- [详细使用方法与限制](task-monster/README.md)
+- [开发过程、AI 使用和试用待办](task-monster/PROCESS.md)
+- [界面](task-monster/app.py)、[任务与存档逻辑](task-monster/game.py)、[原创怪兽绘制](task-monster/art.py)
+- [依赖声明](task-monster/pyproject.toml) 与 [锁定版本](task-monster/uv.lock)
+
+## 存档与限制
+
+任务自动保存至本机 `task-monster/local_data/tasks.json`，已加入 Git 忽略规则，不上传真实任务。刷新后可继续使用。
+这是单人本地原型，没有账号或云同步；同一个服务上的不同浏览器共享本机存档，请避免同时编辑。不要直接作为多人在线服务部署。
+自动识别使用本地关键词与确定性规则，无 AI API。六种怪兽具有按任务名称变化的装饰，同类任务可能拥有相似外形。
+每步伤害相同，不判断真实任务是否完成；XP 由已完成步骤计算，撤销也会回退。
 
 ## 本地验证（可选）
 
-开发时可以在本地检查语法和核心互动。这是辅助测试，不是老师提供的 A3 检查，也不是额外提交要求；当前没有配置每次上传后自动运行的工作流。
+在 task-monster 目录运行：
 
 ```bash
-cd task-monster
-uv sync --locked
-uv run --locked python -m compileall -q app.py tests
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-如果终端已经位于 task-monster 文件夹，跳过第一行。
+没有 GitHub 自动检查工作流。程序测试不代替真实用户试用或老师评分。
 
-## 开发记录
+## Credits 与提交进度
 
-从当前原型开始保留真实 Git 提交。后续每次完成并验证一个有意义的修改后提交，在 GitHub 连接可用时推送。
-过程文档记录重要设计决定、验证结果与真实用户试用，不回填虚构的开发阶段或观察。
+Python 和 Streamlit 概念参考 SD5913 课堂。怪兽由原创 SVG 代码绘制，系统字体和符号用于界面；用户提供的手机游戏截图仅作为风格参考，未复制其中角色或素材。使用 Codex 辅助编程与设计，决定与修改记录见 PROCESS。
+真实用户试用仍待进行。Git 历史保留每次实际修改；截图、程序验证不算用户试用。

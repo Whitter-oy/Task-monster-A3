@@ -718,7 +718,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "streamlit", specifier = ">=1.40,<2" }]
+requires-dist = [{ name = "streamlit", specifier = ">=1.66.1,<2" }]
 
 [[package]]
 name = "typing-extensions"
