@@ -235,3 +235,36 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 .stMainBlockContainer > div > div:has(> .st-key-wallet_hud) { position:sticky; top:0; z-index:80; background:#222133f7; }
 .st-key-wallet_hud { position:static !important; gap:4px !important; padding-top:12px; padding-bottom:8px; }
 .sound-controls { padding-top:0; min-height:24px; }
+
+/* Compact right-hand HUD: wallet and one master sound switch align with the brand. */
+.hud-tools { display:flex; flex-direction:column; align-items:flex-end; gap:4px; min-width:105px; }
+.topbar { align-items:center; }
+.brand small { margin-top:7px; }
+.gem-count { height:29px; min-width:90px; padding-block:2px; }
+.gem-count .gem { width:34px; height:34px; }
+.sound-controls { width:auto; min-height:0; padding:0; }
+.sound-controls button { display:flex; align-items:center; justify-content:center; gap:5px; min-height:26px; padding:2px 8px; border:2px solid #241b30; background:linear-gradient(#88709d,#574466); box-shadow:inset 0 1px #bba4cd,0 2px #2a1c35; color:#f8e9ff; }
+.sound-controls button svg { width:15px; height:15px; fill:#f5d8ff; stroke:#f5d8ff; stroke-width:2; stroke-linejoin:round; }
+.sound-controls button[aria-pressed="true"] { background:linear-gradient(#c59c53,#8c6737);color:#fff0bf; }
+.st-key-create_steps_panel { padding:12px; gap:18px !important; border:3px solid #17111e; border-radius:17px; background:linear-gradient(135deg,#514056,#362b42); box-shadow:inset 0 0 0 2px #977594,inset 0 -5px #281f33,0 5px #110d19; }
+.st-key-create_steps_panel .section-line { margin:0; padding:5px 2px 12px; border:0; border-bottom:2px solid #251c30; border-radius:0; background:none; box-shadow:0 1px #a27e9d45; }
+.st-key-create_steps_panel [data-testid="stForm"] { padding:10px; }
+/* Center the inner Markdown wrapper as well as the native button itself. */
+[data-testid="stButton"] button,[data-testid="stFormSubmitButton"] button { display:flex; align-items:center; justify-content:center; text-align:center; }
+[data-testid="stButton"] button>div,[data-testid="stFormSubmitButton"] button>div { display:flex; align-items:center; justify-content:center; width:100%; }
+[data-testid="stButton"] button p,[data-testid="stFormSubmitButton"] button p { margin:0 !important; text-align:center; }
+.st-key-back_to_quests button p { width:100%; }
+.trophy { background:repeating-conic-gradient(color-mix(in srgb,var(--trophy-color) 45%,var(--trophy-shade)) 0% 25%,var(--trophy-shade) 0% 50%) 0 0 / 24px 24px; box-shadow:inset 0 0 0 2px var(--trophy-color); }
+.trophy-header { background:color-mix(in srgb,var(--trophy-shade) 75%,#161020); }
+.completion-date { text-align:center; padding:13px; border-radius:12px; border:2px solid #241a30; background:linear-gradient(#574361,#3a2c47); box-shadow:inset 0 1px #ae8cbb,0 3px #1f142b; }
+.completion-date small { display:block; font-size:var(--caption); color:#d3b1ea; margin-bottom:6px; }
+.completion-date strong { font-size:var(--body); color:#ffe9ac; }
+[data-testid="stDialog"] [role="dialog"] { background:radial-gradient(circle at 50% 20%,#75568a,#30253e 75%); border:3px solid #1f142c; border-radius:20px; box-shadow:inset 0 0 0 2px #c29bda,0 8px #160d20; color:#fff0d1; max-width:min(420px,calc(100vw - 24px)); }
+[data-testid="stDialog"] h2 { font-family:GameFont,sans-serif; }
+.celebration-art { text-align:center; }
+.celebration-art svg { width:180px; max-height:180px; }
+.celebration-copy { text-align:center; margin:8px 0 22px; }
+.celebration-copy h2 { font-size:var(--title); color:#ffdf8d; }
+.celebration-copy p { font-size:var(--body); line-height:1.5; margin:12px 0; }
+.celebration-copy small { font-size:var(--small); color:#d5b8e9; }
+@media(max-width:360px){.st-key-create_steps_panel{padding:9px}.hud-tools{min-width:90px}.brand{font-size:var(--body)}.brand small{font-size:10px}.st-key-create_steps_panel [data-testid="stForm"]{padding:8px}.section-line small{max-width:45%}}

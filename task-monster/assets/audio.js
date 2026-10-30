@@ -60,6 +60,10 @@
         note(52,t,.12,.3,'sawtooth');note(40,t+.055,.16,.24,'triangle');
         [79,84,88].forEach((n,i)=>note(n,t+.3+i*.09,.23,.23,'sine'));
       } else if (kind==='undo') { note(76,t,.12,.18);note(69,t+.08,.18,.18); }
+      else if (kind==='victory') {
+        note(52,t,.12,.3,'sawtooth');
+        [72,76,79,84,79,84,88,91,96].forEach((n,i)=>note(n,t+.22+i*.105,.48,.22,i%2?'sine':'triangle'));
+      }
       else if (kind==='summon') [60,64,67,72].forEach((n,i)=>note(n,t+i*.075,.3,.22));
       else { note(79,t,.08,.13,'sine');note(84,t+.055,.12,.1,'sine'); }
     }
@@ -70,33 +74,27 @@
       if (!controls) {
         controls=doc.createElement('div');controls.className='sound-controls';
         controls.setAttribute('role','group');controls.setAttribute('aria-label','Sound settings');
-        for (const key of ['music','effects']) {
-          const button=doc.createElement('button');button.type='button';button.dataset.sound=key;
-          button.addEventListener('click',async()=>{
-            try {
-              await unlock(); state[key]=!state[key];
-              if (key==='music') {
-                state.bgm.gain.setTargetAtTime(state.music ? 0.25 : 0,state.context.currentTime,.04);
-                state.next=state.context.currentTime+.03;
-                if (state.music && !state.timer) state.timer=host.setInterval(schedule,60);
-                if (!state.music && state.timer) {host.clearInterval(state.timer);state.timer=null;}
-                schedule();
-              } else if (state.effects) sound('click');
-              render();
-            } catch (_) {button.textContent='Sound unavailable';button.setAttribute('aria-label','Sound unavailable in this browser');}
-          });
-          controls.appendChild(button);
-        }
-        hud.appendChild(controls);
+        const button=doc.createElement('button');button.type='button';button.dataset.sound='all';
+        button.addEventListener('click',async()=>{
+          try {
+            await unlock();
+            const enabled=!state.music;
+            state.music=enabled;state.effects=enabled;
+            state.bgm.gain.setTargetAtTime(enabled ? .25 : 0,state.context.currentTime,.04);
+            state.next=state.context.currentTime+.03;
+            if(enabled && !state.timer) state.timer=host.setInterval(schedule,60);
+            if(!enabled && state.timer){host.clearInterval(state.timer);state.timer=null;}
+            schedule();if(enabled) sound('click');render();
+          } catch(_){button.textContent='Sound unavailable';button.setAttribute('aria-label','Sound unavailable in this browser');}
+        });
+        controls.appendChild(button);
+        hud.querySelector('.hud-tools').appendChild(controls);
       }
-      for (const key of ['music','effects']) {
-        const button=controls.querySelector(`[data-sound="${key}"]`);
-        const label=key==='music'?'♪ Music':'♫ SFX';
-        const text=label+(state[key]?' on':' off');
-        if (button.textContent!==text) button.textContent=text;
-        button.setAttribute('aria-pressed',String(state[key]));
-        button.setAttribute('aria-label',`${key==='music'?'Background music':'Sound effects'} ${state[key]?'on':'off'}`);
-      }
+      const button=controls.querySelector('[data-sound="all"]');
+      const enabled=state.music;
+      button.innerHTML=(enabled?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9H7L13 4V20L7 15H3Z"/><path d="M17 8Q22 12 17 16" fill="none"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9H7L13 4V20L7 15H3Z"/><path d="M17 9L22 15M22 9L17 15" fill="none"/></svg>')+'<span>Sound '+(enabled?'on':'off')+'</span>';
+      button.setAttribute('aria-pressed',String(enabled));
+      button.setAttribute('aria-label','Game sound '+(enabled?'on':'off'));
     }
     doc.addEventListener('click',event=>{
       const button=event.target.closest('button');

@@ -25,8 +25,11 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertFalse(self.app.exception)
 
     def button(self, key):
-        if key.startswith("nav_") and self.app.session_state["page"] == "battle":
-            self.app.button(key="back_to_quests").click().run()
+        if key.startswith("nav_") and self.app.session_state["page"] in ("battle", "review"):
+            if self.app.session_state.get("pending_victory"):
+                self.app.button(key="finish_celebration").click().run()
+            else:
+                self.app.button(key="back_to_quests").click().run()
         self.app.button(key=key).click().run()
         self.assertFalse(self.app.exception)
 
@@ -68,23 +71,37 @@ class TaskMonsterTests(unittest.TestCase):
         self.button("nav_home")
         self.assertEqual(len([b for b in self.app.button if b.label == "Enter battle"]), 2)
 
-    def test_attack_gallery_and_undo_are_consistent(self):
+    def test_victory_returns_home_and_collection_is_read_only(self):
         task_id = self.add_task("Finish A3")
         self.button(f"attack_{task_id}_0")
         self.assertEqual(health(self.app.session_state["tasks"][0]), (100, 200))
+        self.button(f"attack_{task_id}_0")
+        self.assertEqual(health(self.app.session_state["tasks"][0]), (200, 200))
+        self.button(f"attack_{task_id}_0")
         self.button(f"attack_{task_id}_1")
         self.assertTrue(is_defeated(self.app.session_state["tasks"][0]))
+        self.assertTrue(self.app.session_state["tasks"][0]["completed_at"])
+        self.button("finish_celebration")
+        self.assertEqual(self.app.session_state["page"], "home")
+        self.assertIsNone(self.app.session_state["pending_victory"])
         self.button("nav_gallery")
-        self.assertTrue(any("trophy-stars" in m.value for m in self.app.markdown))
-        self.assertFalse(any("collection-intro" in m.value for m in self.app.markdown))
-        self.assertEqual(len([b for b in self.app.button if b.label == "View quest"]), 1)
         self.button(f"trophy_{task_id}")
+        self.assertEqual(self.app.session_state["page"], "review")
+        self.assertFalse(any(b.label in ("Undo", "Abandon quest", "Complete & strike!") for b in self.app.button))
+        self.assertFalse(any('<div class="battle-hp"' in m.value for m in self.app.markdown))
+        self.assertTrue(any("HKT" in m.value for m in self.app.markdown))
+        self.button("back_to_quests")
+        self.assertEqual(self.app.session_state["page"], "gallery")
+
+    def test_completed_steps_move_to_bottom_without_changing_attack_index(self):
+        task_id = self.add_task("Read a book", ("First", "Second", "Third"))
+        self.button(f"attack_{task_id}_1")
+        from game import ordered_steps
+        self.assertEqual([i for i,s in ordered_steps(self.app.session_state["tasks"][0])], [0,2,1])
         self.button(f"attack_{task_id}_0")
-        self.assertEqual(health(self.app.session_state["tasks"][0]), (100, 200))
-        self.button("nav_gallery")
-        self.assertFalse(any(b.label == "View quest" for b in self.app.button))
-        self.button("nav_home")
-        self.assertTrue(any(b.key == f"enter_{task_id}" for b in self.app.button))
+        self.assertEqual([i for i,s in ordered_steps(self.app.session_state["tasks"][0])], [2,1,0])
+        self.button(f"attack_{task_id}_1")
+        self.assertEqual([i for i,s in ordered_steps(self.app.session_state["tasks"][0])], [1,2,0])
 
     def test_progress_survives_new_session(self):
         task_id = self.add_task("Clean my room")
@@ -167,7 +184,7 @@ class TaskMonsterTests(unittest.TestCase):
         self.button(f"attack_{task_id}_1")
         self.assertFalse(any(b.label == "View collection" for b in self.app.button))
         self.assertFalse(any('<div class="victory-banner"' in m.value for m in self.app.markdown))
-        self.button("back_to_quests")
+        self.button("finish_celebration")
         self.button("nav_gallery")
         self.button(f"trophy_{task_id}")
         self.button("back_to_quests")

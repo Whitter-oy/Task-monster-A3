@@ -86,7 +86,9 @@ def health(task):
 def toggle_step(task, index):
     step = task["steps"][index]
     step["done"] = not step["done"]
-    task["completed_at"] = datetime.now(timezone.utc).isoformat() if is_defeated(task) else None
+    now = datetime.now(timezone.utc).isoformat()
+    step["completed_at"] = now if step["done"] else None
+    task["completed_at"] = now if is_defeated(task) else None
 
 
 def load_tasks(path):
@@ -131,3 +133,7 @@ def save_tasks(path, tasks):
     finally:
         if temporary is not None and temporary.exists():
             temporary.unlink()
+
+
+def ordered_steps(task):
+    return sorted(enumerate(task["steps"]), key=lambda item: (item[1]["done"], item[1].get("completed_at") or "", item[0]))

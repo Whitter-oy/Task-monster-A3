@@ -8,7 +8,7 @@
 
 These screenshots use fictional demonstration tasks and completion states. They are not evidence of a user trial.
 
-[Creation page](task-monster/assets/screenshots/create.jpg) · [Grouped steps and sound switches](task-monster/assets/screenshots/steps.jpg).
+[Creation page](task-monster/assets/screenshots/create.jpg) · [Grouped steps and sound switch](task-monster/assets/screenshots/steps.jpg) · [Victory](task-monster/assets/screenshots/victory.jpg) · [Read-only recap](task-monster/assets/screenshots/review.jpg).
 
 ## Run locally
 
@@ -27,8 +27,8 @@ Python 3.13 is selected by `.python-version`; `uv.lock` records exact dependency
 1. Choose **Summon**, enter a quest name, and select a type or use **Auto-detect**.
 2. Add 2–24 small steps. Each step adds one monster level and 100 HP. The summon button appears only after two steps are added, and the monster is revealed only after creation.
 3. The **Quests** screen shows all active monsters. Choose **Enter battle** for a task.
-4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Use **Undo** after an accidental completion.
-5. Completing every step adds the monster to **Collection**. Choose **View quest** below a card to reopen its quest. Undoing a step moves it back to active quests.
+4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Completed steps move to the bottom in completion order. Use **Undo** while the quest is active after an accidental completion.
+5. Completing every step adds the monster to **Collection**. Choose **View quest** below a card to reopen its quest. A celebration dialog appears after the final step; dismiss it to return home. Completed quests are read-only.
 
 The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its compact bottom navigation uses original vector icons, reveals a label only for the selected tab, and leaves space for the end of long pages. Battle screens hide the dock and provide a game-style Back button. Type uses the bundled Lilita One cartoon font and a shared five-size scale.
 
@@ -41,9 +41,9 @@ The interface stays within a 460px phone-style frame on desktop and adapts to na
 
 ## Sound
 
-Use **Music off** or **SFX off** near the wallet to enable each channel. Both start muted. Music continues through page changes; mute either channel at any time. Reloading the browser resets both to off. Background music pauses while the tab is hidden. Visual feedback remains usable without sound or Web Audio support.
+Use **Sound off** beside the wallet to enable background music and effects together. The game starts muted. Sound continues through page changes; use the same switch to mute everything. Reloading resets sound to off. Background music pauses while the tab is hidden. Visual feedback remains usable without sound or Web Audio support.
 
-The original eight-bar, 112 BPM C-major melody and effects were composed by Codex and rendered procedurally with the browser's Web Audio oscillators. This is AI-assisted composition and code synthesis, not output from a music-generation model or an external music service. No account, recording, microphone or paid service is needed. Navigation, summoning, damage, gems and undo use distinct cues. See `assets/audio.js` in the app folder for the score and synthesis.
+The original eight-bar, 112 BPM C-major melody and effects were composed by Codex and rendered procedurally with the browser's Web Audio oscillators. This is AI-assisted composition and code synthesis, not output from a music-generation model or an external music service. No account, recording, microphone or paid service is needed. Navigation, summoning, damage, gems, undo and victory use distinct cues. See `assets/audio.js` in the app folder for the score and synthesis.
 
 ## Storage and limitations
 

@@ -3,11 +3,13 @@ import json
 import base64
 import os
 from pathlib import Path
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import streamlit as st
 
 from art import monster_svg, navigation_svg, gem_svg, star_svg, remove_svg
-from game import CATEGORIES, category_for, completed_count, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, normalize_category, gem_balance
+from game import CATEGORIES, category_for, completed_count, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, normalize_category, gem_balance, ordered_steps
 
 ROOT = Path(__file__).resolve().parent
 DATA_FILE = Path(os.environ.get("TASK_MONSTER_DATA_FILE", ROOT / "local_data" / "tasks.json"))
@@ -46,6 +48,7 @@ def esc(value):
 def navigate(page, task_id=None):
     if page == "battle" and st.session_state.page in ("home", "create", "gallery"):
         st.session_state.battle_origin = "home" if st.session_state.page == "create" else st.session_state.page
+    st.session_state.pending_victory = None
     st.session_state.page = page
     st.session_state.selected = task_id
     st.session_state.effect = None
@@ -63,14 +66,18 @@ def persist():
 
 def attack(task_id, index):
     task = next(t for t in st.session_state.tasks if t["id"] == task_id)
+    if is_defeated(task):
+        return
     was_done = task["steps"][index]["done"]
     toggle_step(task, index)
     sequence = st.session_state.get("reward_sequence", 0) + 1
     st.session_state.reward_sequence = sequence
     st.session_state.effect = {
-        "kind": "undo" if was_done else "attack", "task_id": task_id,
+        "kind": "victory" if is_defeated(task) else ("undo" if was_done else "attack"), "task_id": task_id,
         "step_index": index, "sequence": sequence,
     }
+    if is_defeated(task):
+        st.session_state.pending_victory = task_id
     persist()
 
 
@@ -92,12 +99,9 @@ defeated = [t for t in tasks if is_defeated(t)]
 finished_steps = sum(completed_count(t) for t in tasks)
 effect = st.session_state.effect if isinstance(st.session_state.effect, dict) else None
 with st.container(key="wallet_hud"):
-    markup(f'<div class="topbar"><div class="brand">TASK MONSTER<small>SMALL STEPS. BIG WINS.</small></div><div class="gem-count" aria-label="Gem wallet" aria-live="polite"><span class="gem">{gem_svg()}</span><strong>{gem_balance(tasks)}</strong></div></div>')
+    markup(f'<div class="topbar"><div class="brand">TASK MONSTER<small>SMALL STEPS. BIG WINS.</small></div><div class="hud-tools"><div class="gem-count" aria-label="Gem wallet" aria-live="polite"><span class="gem">{gem_svg()}</span><strong>{gem_balance(tasks)}</strong></div></div></div>')
 if st.session_state.storage_error:
     st.warning(st.session_state.storage_error + " Session mode is active. The original save will not be overwritten.")
-if st.session_state.notice:
-    markup(f'<div class="notice">{gem_svg()}<span>{esc(st.session_state.notice)}</span></div>')
-    st.session_state.notice = None
 
 page = st.session_state.page
 
@@ -125,66 +129,80 @@ elif page == "create":
     markup('<div class="page-heading"><h1>Summon a monster</h1><span>NEW QUEST</span></div><div class="subcopy">Name your quest. Make the first step easy to start.</div>')
     title = st.text_input("Quest name", key="new_title", placeholder="e.g. Finish my A3 project", max_chars=60)
     category = st.selectbox("Quest type", ["Auto-detect"] + list(CATEGORIES), key="new_category")
-    markup('<div class="section-line"><h2>Quest steps</h2><small>At least 2 · max. 24</small></div>')
-    with st.form("add_step_form", clear_on_submit=True):
-        with st.container(key="step_editor"):
-            field, action = st.columns([3, 1], vertical_alignment="bottom")
-            with field:
-                draft_title = st.text_input("Add a small step", placeholder="e.g. Read one page", max_chars=120)
-            with action:
-                add = st.form_submit_button("Add step", use_container_width=True)
-    if add:
-        if not draft_title.strip():
-            st.warning("A step cannot be empty. Add one small action you can take.")
-        elif len(st.session_state.draft) >= 24:
-            st.warning("A quest can have up to 24 steps. Try splitting it into two quests.")
-        else:
-            st.session_state.draft.append(draft_title.strip())
-            st.rerun()
-    for i, step in enumerate(st.session_state.draft):
-        with st.container(key=f"step_draft_{i}"):
-            text, remove = st.columns([5, 1], vertical_alignment="center")
-            with text:
-                markup(f'<div class="step-line"><span class="step-number">{i+1:02d}</span><div class="step-copy">{esc(step)}</div></div>')
-            with remove:
-                st.button("Remove step", key=f"remove_draft_{i}", help="Remove this step", on_click=drop_draft, args=(i,))
-    step_count = len(st.session_state.draft)
-    if step_count < 2:
-        st.caption(f"Add {2-step_count} more step{'s' if step_count == 0 else ''} to unlock summoning.")
-    else:
-        markup(f'<div class="summon-ready">{step_count} steps · Level {step_count} · {step_count * 100} HP</div>')
-        if st.button("Summon monster", key="summon_button", type="primary", use_container_width=True):
-            try:
-                task = create_task(title, st.session_state.draft, category)
-            except ValueError as error:
-                st.warning(str(error))
+    with st.container(key="create_steps_panel"):
+        markup('<div class="section-line"><h2>Quest steps</h2><small>At least 2 · max. 24</small></div>')
+        with st.form("add_step_form", clear_on_submit=True):
+            with st.container(key="step_editor"):
+                field, action = st.columns([3, 1], vertical_alignment="bottom")
+                with field:
+                    draft_title = st.text_input("Add a small step", placeholder="e.g. Read one page", max_chars=120)
+                with action:
+                    add = st.form_submit_button("Add step", use_container_width=True)
+        if add:
+            if not draft_title.strip():
+                st.warning("A step cannot be empty. Add one small action you can take.")
+            elif len(st.session_state.draft) >= 24:
+                st.warning("A quest can have up to 24 steps. Try splitting it into two quests.")
             else:
-                tasks.append(task)
-                persist()
-                st.session_state.draft = []
-                st.session_state.notice = f"{task['title']} is ready for battle!"
-                navigate("battle", task["id"])
+                st.session_state.draft.append(draft_title.strip())
                 st.rerun()
+        for i, step in enumerate(st.session_state.draft):
+            with st.container(key=f"step_draft_{i}"):
+                text, remove = st.columns([5, 1], vertical_alignment="center")
+                with text:
+                    markup(f'<div class="step-line"><span class="step-number">{i+1:02d}</span><div class="step-copy">{esc(step)}</div></div>')
+                with remove:
+                    st.button("Remove step", key=f"remove_draft_{i}", help="Remove this step", on_click=drop_draft, args=(i,))
+        step_count = len(st.session_state.draft)
+        if step_count < 2:
+            st.caption(f"Add {2-step_count} more step{'s' if step_count == 0 else ''} to unlock summoning.")
+        else:
+            markup(f'<div class="summon-ready">{step_count} steps · Level {step_count} · {step_count * 100} HP</div>')
+            if st.button("Summon monster", key="summon_button", type="primary", use_container_width=True):
+                try:
+                    task = create_task(title, st.session_state.draft, category)
+                except ValueError as error:
+                    st.warning(str(error))
+                else:
+                    tasks.append(task)
+                    persist()
+                    st.session_state.draft = []
+                    st.session_state.notice = f"{task['title']} is ready for battle!"
+                    navigate("battle", task["id"])
+                    st.rerun()
 
-elif page == "battle":
+elif page in ("battle", "review"):
     task = next((t for t in tasks if t["id"] == st.session_state.selected), None)
     if task is None:
         navigate("home")
         st.rerun()
-    st.button("Back", key="back_to_quests", help="Return to the previous screen", on_click=navigate, args=(st.session_state.get("battle_origin", "home"),))
+    reviewing = page == "review" or is_defeated(task)
+    st.button("Back", key="back_to_quests", help="Return to the previous screen", on_click=navigate, args=("gallery" if page == "review" else st.session_state.get("battle_origin", "home"),))
     name = CATEGORIES[task["category"]][0]
     hp, maximum = health(task)
     victory = is_defeated(task)
     hit = effect["kind"] if effect else None
     markup(f'<div class="battle-title"><h1>{esc(task["title"])}</h1><span class="tag">Lv. {len(task["steps"]):02d}</span></div><div class="subcopy">{task["category"]} realm · {name}</div>')
-    markup(f'<div class="battle-hp"><div class="hp-label"><span>MONSTER HP</span><span>{hp} / {maximum}</span></div><div class="hp-track"><div class="hp-fill" style="width:{hp/maximum*100}%"></div></div></div>')
-    floating = '<div class="damage">−100 HP<small>+10 gems</small></div>' if hit == "attack" else ('<div class="damage">＋100 HP</div>' if hit == "undo" else '')
-    markup(f'<div class="arena {"victory" if victory else ""} {"hurt" if hit == "attack" else ""}">{floating}<div class="arena-monster">{monster_svg(task["category"],task["title"],1-hp/maximum,victory)}</div><div class="arena-note">{"QUEST COMPLETE · MONSTER COLLECTED" if victory else "Finish a real-world step, then strike below"}</div></div>')
+    if not reviewing:
+        markup(f'<div class="battle-hp"><div class="hp-label"><span>MONSTER HP</span><span>{hp} / {maximum}</span></div><div class="hp-track"><div class="hp-fill" style="width:{hp/maximum*100}%"></div></div></div>')
+    if st.session_state.notice:
+        markup(f'<div class="notice">{gem_svg()}<span>{esc(st.session_state.notice)}</span></div>')
+        st.session_state.notice = None
+    if reviewing:
+        try:
+            completed = datetime.fromisoformat(task.get("completed_at") or "").astimezone(ZoneInfo("Asia/Hong_Kong")).strftime("%d %b %Y · %H:%M HKT")
+        except (ValueError, TypeError):
+            completed = "Time unavailable for this older quest"
+        markup(f'<div class="completion-date"><small>QUEST COMPLETED</small><strong>{esc(completed)}</strong></div>')
+    floating = '<div class="damage">−100 HP<small>+10 gems</small></div>' if hit in ("attack", "victory") else ('<div class="damage">＋100 HP</div>' if hit == "undo" else '')
+    markup(f'<div class="arena {"victory" if victory else ""} {"hurt" if hit in ("attack", "victory") else ""}">{floating}<div class="arena-monster">{monster_svg(task["category"],task["title"],1-hp/maximum,victory)}</div><div class="arena-note">{"QUEST COMPLETE · MONSTER COLLECTED" if victory else "Finish a real-world step, then strike below"}</div></div>')
     with st.container(key="battle_steps_panel"):
-        markup(f'<div class="section-line"><h2>Your steps · {completed_count(task)}/{len(task["steps"])}</h2><small>Each step deals 100 damage</small></div>')
-        for i, step in enumerate(task["steps"]):
+        markup(f'<div class="section-line"><h2>Your steps · {completed_count(task)}/{len(task["steps"])}</h2><small>{"A quest worth remembering" if reviewing else "Each step deals 100 damage"}</small></div>')
+        for i, step in (enumerate(task["steps"]) if reviewing else ordered_steps(task)):
             with st.container(key=f"step_{task['id']}_{i}"):
-                if step["done"]:
+                if reviewing:
+                    markup(f'<div class="step-line done"><span class="step-number">{gem_svg()}</span><div class="step-copy">{esc(step["title"])}<small>Completed</small></div></div>')
+                elif step["done"]:
                     text, undo = st.columns([4, 1], vertical_alignment="center")
                     with text:
                         markup(f'<div class="step-line done"><span class="step-number">{gem_svg()}</span><div class="step-copy">{esc(step["title"])}<small>Complete · 10 gems earned</small></div></div>')
@@ -193,10 +211,11 @@ elif page == "battle":
                 else:
                     markup(f'<div class="step-line"><span class="step-number">{i+1:02d}</span><div class="step-copy">{esc(step["title"])}<small>−100 HP · +10 gems</small></div></div>')
                     st.button("Complete & strike!", key=f"attack_{task['id']}_{i}", type="primary", on_click=attack, args=(task["id"], i), use_container_width=True)
-    with st.expander("Quest options"):
-        st.caption("Abandoning removes this quest and its progress. Other quests are kept.")
-        confirmed = st.checkbox("I confirm I want to abandon this quest", key=f"confirm_{task['id']}")
-        st.button("Abandon quest", key="abandon_button", disabled=not confirmed, on_click=abandon, args=(task["id"],))
+    if not reviewing:
+        with st.expander("Quest options"):
+            st.caption("Abandoning removes this quest and its progress. Other quests are kept.")
+            confirmed = st.checkbox("I confirm I want to abandon this quest", key=f"confirm_{task['id']}")
+            st.button("Abandon quest", key="abandon_button", disabled=not confirmed, on_click=abandon, args=(task["id"],))
 
 elif page == "gallery":
     markup('<div class="page-heading"><h1>Collection</h1><span>MONSTER COLLECTION</span></div><div class="subcopy">Revisit the quests behind your victories.</div>')
@@ -209,14 +228,14 @@ elif page == "gallery":
             for column, task in zip(columns, list(reversed(defeated))[row:row+3]):
                 with column:
                     with st.container(key=f"trophy_card_{task['id']}"):
-                        name = CATEGORIES[task["category"]][0]
+                        name, _, color, shade = CATEGORIES[task["category"]]
                         level = len(task["steps"])
                         stars = "".join(star_svg(i < min(level, 5)) for i in range(5))
-                        markup(f'<div class="trophy"><div class="trophy-header"><strong>{name}</strong></div><div class="trophy-art">{monster_svg(task["category"],task["title"],trophy=True)}</div><div class="trophy-stars" aria-label="Level {level}" title="Level {level}">{stars}</div><div class="task-title" title="{esc(task["title"])}">{esc(task["title"])}</div></div>')
-                        st.button("View quest", key=f"trophy_{task['id']}", help="View this quest and its completed steps", on_click=navigate, args=("battle", task["id"]), use_container_width=True)
+                        markup(f'<div class="trophy" style="--trophy-color:{color};--trophy-shade:{shade}"><div class="trophy-header"><strong>{name}</strong></div><div class="trophy-art">{monster_svg(task["category"],task["title"],trophy=True)}</div><div class="trophy-stars" aria-label="Level {level}" title="Level {level}">{stars}</div><div class="task-title" title="{esc(task["title"])}">{esc(task["title"])}</div></div>')
+                        st.button("View quest", key=f"trophy_{task['id']}", help="View this quest and its completed steps", on_click=navigate, args=("review", task["id"]), use_container_width=True)
 
 markup('<div class="save-note">LOCAL SAVE · YOUR ADVENTURE, YOUR PACE</div>')
-markup('<div class="nav-clearance" aria-hidden="true"></div>' if page != "battle" else '<div class="page-end" aria-hidden="true"></div>')
+markup('<div class="nav-clearance" aria-hidden="true"></div>' if page not in ("battle", "review") else '<div class="page-end" aria-hidden="true"></div>')
 if page in ("home", "create", "gallery"):
     with st.container(key="bottom_nav"):
         for column, (label, target) in zip(st.columns(3), [("Quests", "home"), ("Summon", "create"), ("Collection", "gallery")]):
@@ -236,7 +255,7 @@ if st.session_state.get("rendered_route") != route:
     st.session_state.rendered_route = route
 
 # Consume each reward once. This script animates presentation only; Python owns the balance.
-if effect and effect["kind"] == "attack":
+if effect and effect["kind"] in ("attack", "victory"):
     event = {**effect, "gem": gem_svg()}
     with st.container(key="reward_animation"):
         reward_script = (ROOT / "assets" / "rewards.js").read_text()
@@ -249,3 +268,23 @@ with st.container(key="audio_engine"):
     audio_payload = "(() => {const soundEvent = " + json.dumps(sound_event) + ";" + (ROOT / "assets/audio.js").read_text() + "})();"
     # Execute in the main page realm, so handlers survive disposal of this iframe.
     st.iframe("<script>const node=window.parent.document.createElement('script');node.textContent=" + json.dumps(audio_payload) + ";window.parent.document.body.appendChild(node);node.remove();</script>", height=1)
+
+
+def dismiss_victory():
+    st.session_state.pending_victory = None
+    navigate("home")
+
+
+@st.dialog("Monster defeated!", on_dismiss=dismiss_victory)
+def victory_dialog(task):
+    markup(f'<div class="celebration-art">{monster_svg(task["category"], task["title"], trophy=True)}</div><div class="celebration-copy"><h2>You did it!</h2><p>You defeated {CATEGORIES[task["category"]][0]} by finishing<br>{esc(task["title"])}.</p><small>Your monster is waiting in Collection.</small></div>')
+    if st.button("Back to quests", key="finish_celebration", type="primary", use_container_width=True):
+        dismiss_victory()
+        st.rerun()
+
+
+pending = st.session_state.get("pending_victory")
+if pending:
+    completed_task = next((t for t in tasks if t["id"] == pending and is_defeated(t)), None)
+    if completed_task:
+        victory_dialog(completed_task)

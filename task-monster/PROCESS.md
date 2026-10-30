@@ -89,6 +89,16 @@ Following the author's third screenshot review, the interface switched from devi
 
 Verification included 13 passing Python/AppTest checks and two dependency-free Node audio checks for opt-in playback, scheduling, mute, rerender persistence and reward-event deduplication. Browser checks exercised both switches and an attack/reward update using fictional data. This verification does not replace the required independent user trial.
 
+## Completion flow and collection recap revision
+
+The author asked for one unified Sound switch, a smaller HUD, creation steps grouped in the same frame as active quests, consistent button-label alignment and species-colored collection cards. Those changes replace the previous separate Music/SFX controls and shared card color. Back now precedes the task title and summon notice.
+
+Active quests keep pending steps first. Completing a step appends it below earlier completions; undo returns it to the pending group. Original step indices stay stable so moving a card cannot attack a different step. Per-step completion timestamps determine this order and are saved with the quest. Older saves remain readable.
+
+Completing the last step stores the quest's UTC completion time and opens a styled celebration dialog. Its close button, Escape/outside dismissal and explicit Back to quests action use the same callback to return home. A new ascending victory fanfare is distinct from ordinary hit/gem cues. A pending dialog does not replay the fanfare on rerender. Collection now opens a read-only recap: no health bar, Undo, strike or abandon actions. The recap displays the saved completion time in Hong Kong time, or a clear unavailable message for legacy data without a timestamp.
+
+Verification: 14 Python/AppTest checks and two Node audio checks passed. Browser interaction verified final-step dialog opening, closing its X to return home, master sound on/off across routes, read-only recap controls, and different species colors. Screenshots still use fictional demonstration tasks. No independent user trial is claimed.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

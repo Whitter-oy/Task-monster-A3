@@ -18,8 +18,8 @@ Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C 
 - **Quests:** browse active monsters, level, health and progress, then select **Enter battle**.
 - **Summon:** name a task, choose a type or **Auto-detect**, and add at least two steps. The small green Add step action is separate from the gold Summon monster action. Red trash buttons remove draft steps. The monster stays a surprise until summoning.
 - **Level and health:** a quest has 2–24 steps. Each step adds one level and 100 HP.
-- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. A weakened monster changes expression. Use **Undo** if needed.
-- **Collection:** completed quests appear as cards. The **View quest** button below each card opens its quest; undoing completion returns the quest to the board.
+- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. A weakened monster changes expression. Completed steps move to the bottom in completion order. Undo is available while a quest is active. The last step opens a celebration dialog with a special victory cue; closing it returns home.
+- **Collection:** completed quests appear as cards. The **View quest** button below each card opens a read-only recap with its completion time in Hong Kong time, without health or editing controls.
 - **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
 
 ## Screenshots
@@ -28,13 +28,13 @@ Fictional demonstration tasks, not records of user testing:
 
 <img src="assets/screenshots/home.jpg" width="220" alt="Quest board" /> <img src="assets/screenshots/battle.jpg" width="220" alt="Monster battle" /> <img src="assets/screenshots/gallery.jpg" width="220" alt="Monster collection" />
 
-[Creation page](assets/screenshots/create.jpg) · [Grouped steps and sound switches](assets/screenshots/steps.jpg).
+[Creation page](assets/screenshots/create.jpg) · [Grouped steps and sound switch](assets/screenshots/steps.jpg) · [Victory](assets/screenshots/victory.jpg) · [Read-only recap](assets/screenshots/review.jpg).
 
 ## Sound
 
-Use **Music off** or **SFX off** near the wallet to enable each channel. Both start muted. Music continues through page changes; mute either channel at any time. Reloading the browser resets both to off. Background music pauses while the tab is hidden. Visual feedback remains usable without sound or Web Audio support.
+Use **Sound off** beside the wallet to enable background music and effects together. The game starts muted. Sound continues through page changes; use the same switch to mute everything. Reloading resets sound to off. Background music pauses while the tab is hidden. Visual feedback remains usable without sound or Web Audio support.
 
-The original eight-bar, 112 BPM C-major melody and effects were composed by Codex and rendered procedurally with the browser's Web Audio oscillators. This is AI-assisted composition and code synthesis, not output from a music-generation model or an external music service. No account, recording, microphone or paid service is needed. Navigation, summoning, damage, gems and undo use distinct cues. See `assets/audio.js` in the app folder for the score and synthesis.
+The original eight-bar, 112 BPM C-major melody and effects were composed by Codex and rendered procedurally with the browser's Web Audio oscillators. This is AI-assisted composition and code synthesis, not output from a music-generation model or an external music service. No account, recording, microphone or paid service is needed. Navigation, summoning, damage, gems, undo and victory use distinct cues. See `assets/audio.js` in the app folder for the score and synthesis.
 
 ## Storage and errors
 
@@ -46,7 +46,7 @@ Empty input and too many steps produce messages. An unreadable or unsupported sa
 
 This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Task names affect decorations and types select six species. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and the gem balance is completed steps × 10. Undoing a step or abandoning its quest reverses the corresponding rewards.
 
-Active quests and battle steps are each grouped in a single framed panel. Completed monsters remain in Collection; battles show their final state without an extra completion panel.
+Active quests, creation steps and battle steps are each grouped in a single framed panel. Completed monsters remain in Collection; the final step opens a dismissible celebration dialog, followed by a return to the quest board.
 
 The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and labelled View quest actions. The dock appears on the three primary screens; battles have a game-style Back button that returns to the screen they were opened from.
 
