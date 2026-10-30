@@ -48,7 +48,7 @@ This is a single-user local prototype with one shared save per server, not a pub
 
 Active quests, creation steps and battle steps are each grouped in a single framed panel. Completed monsters remain in Collection; the final step opens a dismissible celebration dialog, followed by a return to the quest board.
 
-The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and labelled View quest actions. The dock appears on the three primary screens; battles have a game-style Back button that returns to the screen they were opened from.
+The responsive web interface has a 460px phone frame, aligned square navigation tiles and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and labelled View quest actions. The dock appears on the three primary screens; battles have a game-style Back arrow that returns to the screen they were opened from.
 
 ## Optional local checks
 

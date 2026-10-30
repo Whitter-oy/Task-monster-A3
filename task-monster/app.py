@@ -108,7 +108,7 @@ page = st.session_state.page
 if page == "home":
     markup('<div class="page-heading"><h1>Quest board</h1><span>QUEST BOARD</span></div>')
     with st.container(key="hero_card"):
-        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-art">{monster_svg("Fitness", "hero")}</div></div>')
+        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-party"><span class="party-owl">{monster_svg("Study", "hero-owl")}</span><span class="party-plant">{monster_svg("Life", "hero-plant")}</span><span class="party-dragon">{monster_svg("Fitness", "hero")}</span></div></div>')
         if st.button("Summon a new quest", type="primary", use_container_width=True):
             navigate("create")
             st.rerun()
@@ -146,13 +146,6 @@ elif page == "create":
             else:
                 st.session_state.draft.append(draft_title.strip())
                 st.rerun()
-        for i, step in enumerate(st.session_state.draft):
-            with st.container(key=f"step_draft_{i}"):
-                text, remove = st.columns([5, 1], vertical_alignment="center")
-                with text:
-                    markup(f'<div class="step-line"><span class="step-number">{i+1:02d}</span><div class="step-copy">{esc(step)}</div></div>')
-                with remove:
-                    st.button("Remove step", key=f"remove_draft_{i}", help="Remove this step", on_click=drop_draft, args=(i,))
         step_count = len(st.session_state.draft)
         if step_count < 2:
             st.caption(f"Add {2-step_count} more step{'s' if step_count == 0 else ''} to unlock summoning.")
@@ -170,6 +163,14 @@ elif page == "create":
                     st.session_state.notice = f"{task['title']} is ready for battle!"
                     navigate("battle", task["id"])
                     st.rerun()
+
+        for i, step in enumerate(st.session_state.draft):
+            with st.container(key=f"step_draft_{i}"):
+                text, remove = st.columns([5, 1], vertical_alignment="center")
+                with text:
+                    markup(f'<div class="step-line"><span class="step-number">{i+1:02d}</span><div class="step-copy">{esc(step)}</div></div>')
+                with remove:
+                    st.button("Remove step", key=f"remove_draft_{i}", help="Remove this step", on_click=drop_draft, args=(i,))
 
 elif page in ("battle", "review"):
     task = next((t for t in tasks if t["id"] == st.session_state.selected), None)

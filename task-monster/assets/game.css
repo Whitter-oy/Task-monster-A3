@@ -268,3 +268,47 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 .celebration-copy p { font-size:var(--body); line-height:1.5; margin:12px 0; }
 .celebration-copy small { font-size:var(--small); color:#d5b8e9; }
 @media(max-width:360px){.st-key-create_steps_panel{padding:9px}.hud-tools{min-width:90px}.brand{font-size:var(--body)}.brand small{font-size:10px}.st-key-create_steps_panel [data-testid="stForm"]{padding:8px}.section-line small{max-width:45%}}
+
+/* Final alignment and viewport sizing. Font ink sits below its line box center. */
+.st-key-step_editor [data-testid="stFormSubmitButton"] button { padding:0 !important; display:grid !important; place-items:center; }
+.st-key-step_editor [data-testid="stFormSubmitButton"] button>div { width:100%; height:100%; display:grid !important; place-items:center; }
+.st-key-step_editor [data-testid="stFormSubmitButton"] button p { width:auto; padding:0 !important; margin:0 !important; line-height:1 !important; transform:translateY(-1px); }
+.hud-tools { gap:8px; }
+.sound-controls button,.sound-controls button[aria-pressed="true"] { box-sizing:border-box; width:83px; height:25px; min-height:25px; padding:2px 5px; gap:4px; border-width:2px; font-size:11px; line-height:1; }
+.sound-controls button svg { width:13px;height:13px;flex:none; }
+.hero { min-height:172px; padding-bottom:0; }
+.st-key-hero_card { gap:8px !important; }
+.hero-party { position:absolute; right:-5px; bottom:0; width:163px; height:150px; }
+.hero-party span { position:absolute; display:block; }
+.hero-party svg { width:100%; height:auto; }
+.party-owl { width:87px; left:0; top:0; transform:rotate(-13deg); }
+.party-plant { width:84px; right:-2px; top:0; transform:rotate(12deg); }
+.party-dragon { width:133px; left:20px; bottom:-5px; }
+.st-key-back_to_quests button { width:44px; min-width:44px; height:40px; min-height:40px; padding:0; }
+.st-key-back_to_quests button p { opacity:0; font-size:0 !important; }
+.st-key-back_to_quests button:before { content:""; width:25px; height:25px; left:50%; top:50%; transform:translate(-50%,-50%); background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M15 5L4 16L15 27L15 21L29 21L29 11L15 11Z' fill='%23ffe7ac' stroke='%2334263c' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.st-key-bottom_nav { padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px)); background:#222133ed; border:0 !important; border-radius:0; box-shadow:0 -5px 14px #15111b80; }
+.st-key-bottom_nav [data-testid="stHorizontalBlock"] { gap:5px !important; }
+.st-key-bottom_nav [data-testid="stButton"] button { height:65px; min-height:65px; border:2px solid #1a2b34 !important; border-radius:9px 9px 3px 3px; background:linear-gradient(#45616a,#2b424e); box-shadow:inset 0 2px #728e90,0 3px #111e27; padding:42px 0 5px; }
+.st-key-bottom_nav [data-testid="stButton"] button[kind="primary"] { background:linear-gradient(#8aaeb2,#506d7c); border-color:#24353e !important; box-shadow:inset 0 2px #bed7d1,0 3px #1a2c37; transform:translateY(-5px); color:#fff0cf; }
+.st-key-bottom_nav [data-testid="stButton"] button::before { top:7px; }
+.st-key-bottom_nav [data-testid="stButton"] button[kind="primary"]::before { top:0; }
+[data-testid="stDialog"] [role="dialog"] { box-sizing:border-box !important; width:min(400px,calc(100vw - 28px)) !important; min-width:0 !important; max-width:400px !important; max-height:calc(100dvh - 32px) !important; overflow:auto !important; margin:auto !important; padding:18px !important; }
+[data-testid="stDialog"] [role="dialog"]>div { max-width:100%; box-sizing:border-box; }
+[data-testid="stDialog"] [data-testid="stVerticalBlock"] { gap:10px !important; }
+.celebration-art svg { width:clamp(90px,20dvh,145px); max-height:145px; }
+.celebration-copy { margin:0 0 12px; }
+.celebration-copy h2 { padding:0; font-size:var(--heading); }
+.celebration-copy p { margin:8px 0; overflow-wrap:anywhere; }
+.celebration-copy small { line-height:1.4; }
+@media(max-width:360px){.hero-party{width:137px;right:-6px}.party-owl{width:72px}.party-plant{width:71px}.party-dragon{width:115px;left:12px}.hero h2,.hero p{max-width:57%}.hero{min-height:177px}.sound-controls button,.sound-controls button[aria-pressed="true"]{width:80px}}
+/* Native shortcut wrappers otherwise align the label to their text baseline. */
+.st-key-step_editor [data-testid="stFormSubmitButton"] button>div,
+.st-key-step_editor [data-testid="stFormSubmitButton"] button span { position:static !important; }
+.st-key-step_editor [data-testid="stFormSubmitButton"] button [data-testid="stMarkdownContainer"] { position:absolute !important; left:50%; top:50%; transform:translate(-50%,-50%); width:max-content; height:auto; }
+.st-key-step_editor [data-testid="stFormSubmitButton"] button [data-testid="stMarkdownContainer"] { line-height:1 !important; }
+.st-key-step_editor [data-testid="stFormSubmitButton"] button p { display:block !important; }
+/* Size the native modal shell too, so the close button stays inside the frame. */
+[data-testid="stDialog"] { box-sizing:border-box; display:flex !important; align-items:center !important; justify-content:center !important; padding:16px !important; overflow:auto !important; }
+[data-testid="stDialog"]>div:has(>[role="dialog"]) { width:min(400px,calc(100vw - 32px)) !important; max-width:400px !important; min-width:0 !important; margin:auto !important; background:transparent; box-shadow:none; border-radius:20px; }
+[data-testid="stDialog"] [role="dialog"] { width:100% !important; margin:0 !important; }

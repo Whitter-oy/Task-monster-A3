@@ -99,6 +99,14 @@ Completing the last step stores the quest's UTC completion time and opens a styl
 
 Verification: 14 Python/AppTest checks and two Node audio checks passed. Browser interaction verified final-step dialog opening, closing its X to return home, master sound on/off across routes, read-only recap controls, and different species colors. Screenshots still use fictional demonstration tasks. No independent user trial is claimed.
 
+## Compact controls and viewport correction
+
+The latest author review identified that Add step still appeared low despite a centered outer button. Browser measurement showed its nested inline Markdown line box introduced the offset. The label now uses a block line box positioned at the button center, with a one-pixel optical adjustment. The unlocked Summon monster action is placed before the first draft step.
+
+The celebration content had been constrained while the native modal shell retained a wider default size. Both layers now share a responsive width, capped at 400px, with viewport height limits and scrolling for unusually long content. Browser checks confirmed matching shell/content rectangles and visible close/action controls at 1280×720 and 320×568. Sound on/off measured the same 83×25px at a 390px viewport; only color and icon change. The sound control has a little more space below the wallet. Back retains its accessible name while showing only an original arrow icon.
+
+The home banner now shows three original monsters and a slightly higher summon action. Navigation uses individual square game tiles with a raised selected state. Fourteen existing application checks passed; interaction behavior and saves remain compatible. Screenshot checks use fictional tasks, not an independent user trial.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.
