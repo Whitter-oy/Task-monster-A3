@@ -108,7 +108,7 @@ page = st.session_state.page
 if page == "home":
     markup('<div class="page-heading"><h1>Quest board</h1><span>QUEST BOARD</span></div>')
     with st.container(key="hero_card"):
-        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-party"><span class="party-owl">{monster_svg("Study", "hero-owl")}</span><span class="party-plant">{monster_svg("Life", "hero-plant")}</span><span class="party-dragon">{monster_svg("Fitness", "hero")}</span></div></div>')
+        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-party"><span class="party-golem">{monster_svg("Work", "hero-golem")}</span><span class="party-ghost">{monster_svg("Creative", "hero-ghost")}</span><span class="party-slime">{monster_svg("Other", "hero-slime")}</span><span class="party-owl">{monster_svg("Study", "hero-owl")}</span><span class="party-plant">{monster_svg("Life", "hero-plant")}</span><span class="party-dragon">{monster_svg("Fitness", "hero")}</span></div></div>')
         if st.button("Summon a new quest", type="primary", use_container_width=True):
             navigate("create")
             st.rerun()
@@ -150,7 +150,6 @@ elif page == "create":
         if step_count < 2:
             st.caption(f"Add {2-step_count} more step{'s' if step_count == 0 else ''} to unlock summoning.")
         else:
-            markup(f'<div class="summon-ready">{step_count} steps · Level {step_count} · {step_count * 100} HP</div>')
             if st.button("Summon monster", key="summon_button", type="primary", use_container_width=True):
                 try:
                     task = create_task(title, st.session_state.draft, category)
@@ -163,6 +162,8 @@ elif page == "create":
                     st.session_state.notice = f"{task['title']} is ready for battle!"
                     navigate("battle", task["id"])
                     st.rerun()
+
+            markup(f'<div class="summon-ready">{step_count} steps · Level {step_count} · {step_count * 100} HP</div>')
 
         for i, step in enumerate(st.session_state.draft):
             with st.container(key=f"step_draft_{i}"):

@@ -107,6 +107,12 @@ The celebration content had been constrained while the native modal shell retain
 
 The home banner now shows three original monsters and a slightly higher summon action. Navigation uses individual square game tiles with a raised selected state. Fourteen existing application checks passed; interaction behavior and saves remain compatible. Screenshot checks use fictional tasks, not an independent user trial.
 
+## Restored palette and six-monster banner
+
+At the author's request, square navigation tiles now use the original purple/gold palette. Their bottom edges align with the viewport edge; the dock itself has a transparent background and no shadow, so gaps reveal content and do not intercept interaction. At 390×844, all three button bottoms measured exactly 844px. The home banner combines all six original species with varied scale, rotation and overlapping layers. A 320px browser check found no horizontal overflow.
+
+The unlocked summon action now precedes its steps/level/HP summary, followed by the draft step cards. Major interface headings use uppercase via presentation styles; saved task names are preserved. Updated home, creation and collection screenshots use fictional tasks.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

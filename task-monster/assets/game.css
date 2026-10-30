@@ -312,3 +312,20 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 [data-testid="stDialog"] { box-sizing:border-box; display:flex !important; align-items:center !important; justify-content:center !important; padding:16px !important; overflow:auto !important; }
 [data-testid="stDialog"]>div:has(>[role="dialog"]) { width:min(400px,calc(100vw - 32px)) !important; max-width:400px !important; min-width:0 !important; margin:auto !important; background:transparent; box-shadow:none; border-radius:20px; }
 [data-testid="stDialog"] [role="dialog"] { width:100% !important; margin:0 !important; }
+
+/* Individual purple/gold tiles sit flush on the screen edge; gaps are transparent. */
+.st-key-bottom_nav { background:transparent !important; box-shadow:none !important; padding:0 12px env(safe-area-inset-bottom,0px) !important; pointer-events:none; }
+.st-key-bottom_nav [data-testid="stHorizontalBlock"] { align-items:flex-end !important; }
+.st-key-bottom_nav [data-testid="stColumn"] { align-self:flex-end; }
+.st-key-bottom_nav [data-testid="stButton"] button { pointer-events:auto; background:linear-gradient(#443b56,#2d293c); border-color:#241b32 !important; border-bottom:0 !important; border-radius:9px 9px 0 0; box-shadow:inset 0 2px #7c668d; color:#eadcf5; margin:0 !important; }
+.st-key-bottom_nav [data-testid="stButton"] button[kind="primary"] { height:70px; min-height:70px; transform:none; background:linear-gradient(#ffc85b,#ed9a39); border-color:#775032 !important; box-shadow:inset 0 2px #ffe6af; color:#34200a; }
+.page-heading h1,.battle-title h1,.section-line h2,.hero h2,.empty-state h3,.celebration-copy h2,[data-testid="stDialog"] h2 { text-transform:uppercase; }
+.hero h2 { font-size:24px; }
+.hero-party { right:-8px; bottom:-1px; width:175px; height:168px; }
+.party-golem { width:78px; left:42px; top:-9px; transform:rotate(-8deg); z-index:1; }
+.party-ghost { width:80px; right:-2px; top:13px; transform:rotate(14deg); z-index:2; }
+.party-owl { width:88px; left:-4px; top:13px; transform:rotate(-17deg); z-index:3; }
+.party-plant { width:83px; right:-5px; top:63px; transform:rotate(13deg); z-index:4; }
+.party-slime { width:89px; left:-6px; bottom:-2px; transform:rotate(-10deg); z-index:5; }
+.party-dragon { width:119px; left:36px; bottom:-12px; transform:rotate(5deg); z-index:6; }
+@media(max-width:360px){.hero-party{width:144px;right:-10px;height:162px}.party-golem{width:66px;left:33px}.party-ghost{width:65px}.party-owl{width:73px;left:-5px}.party-plant{width:72px;top:58px}.party-slime{width:76px}.party-dragon{width:104px;left:24px}.hero h2{font-size:var(--heading)}.hero p{max-width:53%}}
