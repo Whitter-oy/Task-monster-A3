@@ -28,9 +28,9 @@ Python 3.13 is selected by `.python-version`; `uv.lock` records exact dependency
 2. Add 2–24 small steps. Each step adds one monster level and 100 HP. The summon button appears only after two steps are added, and the monster is revealed only after creation.
 3. The **Quests** screen shows all active monsters. Choose **Enter battle** for a task.
 4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Use **Undo** after an accidental completion.
-5. Completing every step adds the monster to **Collection**. Tap the star below a card to reopen its quest. Undoing a step moves it back to active quests.
+5. Completing every step adds the monster to **Collection**. Choose **View quest** below a card to reopen its quest. Undoing a step moves it back to active quests.
 
-The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its compact bottom navigation uses original vector icons, reveals a label only for the selected tab, and leaves space for the end of long pages. Type uses one system font and a shared five-size scale without text outlines.
+The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its compact bottom navigation uses original vector icons, reveals a label only for the selected tab, and leaves space for the end of long pages. Battle screens hide the dock and provide a game-style Back button. Type uses a rounded system-font stack and a shared five-size scale without text outlines. Arial Rounded MT Bold is preferred, with Trebuchet MS and sans-serif fallbacks.
 
 ## Files and development
 

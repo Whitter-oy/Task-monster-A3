@@ -71,6 +71,14 @@ XP was replaced with a purple gem wallet derived from completed steps, at 10 gem
 
 Verification: twelve local regression checks passed, including the two-step gate, hidden preview, legacy saves, rewards, undo/re-completion, persistence and consumption of the reward event after one render. Browser checks confirmed only one visible tab label, a 74px dock, no button text shadows, an approximately 78px Add step button and right-aligned red removal actions. At 320px and 1280px viewports the page and dock edges matched and the final action could scroll above the dock. During the browser reward test, five flying gem elements were visible and the wallet moved from 130 to 140, with undo returning it to 130. Demonstration data was isolated from personal saves.
 
+## Visual refinement after the second screenshot review
+
+The author requested rounder cartoon lettering, clearer spacing and more game-like frames. The interface now uses a rounded system-font stack with the existing five-size scale, while keeping text shadows disabled for readability. Bevels, inset highlights, gold studs and plaque headings replace plain outlines. The homepage uses Ember Dragon and contains its summon action inside the hero card.
+
+The creation form's built-in submit hint and character counter overlapped the input on small screens. These overlays are now hidden; the 120-character limit and empty-input validation still apply. Add step is centered in a compact fixed-width column. The surprise information box was removed without exposing the monster before creation. Collection actions were changed from star-only icons to explicit View quest labels following the author's revised preference.
+
+Only the three primary screens show the dock. A battle has a small arrow Back button and remembers whether it was entered from Quests or Collection; a newly summoned quest returns to Quests. Local AppTest checks now cover this navigation, alongside the existing validation, persistence and reward checks (13 passing checks). Browser inspection used fictional tasks to verify the focused input, card labels, hero action, rounded type and navigation. This is implementation verification and author feedback, not the required trial with another person.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

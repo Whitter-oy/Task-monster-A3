@@ -25,6 +25,8 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertFalse(self.app.exception)
 
     def button(self, key):
+        if key.startswith("nav_") and self.app.session_state["page"] == "battle":
+            self.app.button(key="back_to_quests").click().run()
         self.app.button(key=key).click().run()
         self.assertFalse(self.app.exception)
 
@@ -154,6 +156,19 @@ class TaskMonsterTests(unittest.TestCase):
         restored = AppTest.from_file(str(APP)).run()
         self.assertFalse(restored.exception)
         self.assertEqual(gem_balance(restored.session_state["tasks"]), 10)
+
+    def test_battle_has_back_button_without_primary_navigation(self):
+        task_id = self.add_task("Finish a project")
+        self.assertFalse(any((b.key or "").startswith("nav_") for b in self.app.button))
+        self.button("back_to_quests")
+        self.assertEqual(self.app.session_state["page"], "home")
+        self.button(f"enter_{task_id}")
+        self.button(f"attack_{task_id}_0")
+        self.button(f"attack_{task_id}_1")
+        self.click("View collection")
+        self.button(f"trophy_{task_id}")
+        self.button("back_to_quests")
+        self.assertEqual(self.app.session_state["page"], "gallery")
 
     def test_new_single_step_tasks_are_rejected(self):
         with self.assertRaises(ValueError):

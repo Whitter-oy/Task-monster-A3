@@ -19,7 +19,7 @@ Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C 
 - **Summon:** name a task, choose a type or **Auto-detect**, and add at least two steps. The small green Add step action is separate from the gold Summon monster action. Red trash buttons remove draft steps. The monster stays a surprise until summoning.
 - **Level and health:** a quest has 2–24 steps. Each step adds one level and 100 HP.
 - **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. A weakened monster changes expression. Use **Undo** if needed.
-- **Collection:** completed quests appear as cards. The star button below each card opens its quest; undoing completion returns the quest to the board.
+- **Collection:** completed quests appear as cards. The **View quest** button below each card opens its quest; undoing completion returns the quest to the board.
 - **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
 
 ## Screenshots
@@ -40,7 +40,7 @@ Empty input and too many steps produce messages. An unreadable or unsupported sa
 
 This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Task names affect decorations and types select six species. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and the gem balance is completed steps × 10. Undoing a step or abandoning its quest reverses the corresponding rewards.
 
-The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and star-shaped view actions.
+The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and labelled View quest actions. The dock appears on the three primary screens; battles have a game-style Back button that returns to the screen they were opened from.
 
 ## Optional local checks
 
@@ -52,6 +52,6 @@ Tests cover multiple tasks, damage, undo, collection, persistence, invalid saves
 
 ## Credits and next steps
 
-The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. `art.py` contains original monster and navigation SVGs; system fonts are used. Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
+The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. `art.py` contains original monster and navigation SVGs; rounded system fonts are used (Arial Rounded MT Bold, then Trebuchet MS and sans-serif). Font appearance can vary by device. Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
 
 Before submission, complete a real trial with another person, record the observation and design decision, follow the run instructions from a fresh terminal, and verify signed-out access to the public repository.

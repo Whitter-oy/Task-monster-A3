@@ -20,7 +20,6 @@ icon_css += "\n" + "\n".join(
     f'{selector}::before{{background-image:url("data:image/svg+xml;base64,{base64.b64encode(svg.encode()).decode()}");}}'
     for selector, svg in [
         ('[class*="st-key-remove_draft_"] button', remove_svg()),
-        ('.st-key-collection_grid [data-testid="stButton"] button', star_svg()),
     ]
 )
 st.markdown(f"<style>{(ROOT / 'assets' / 'game.css').read_text()}{icon_css}</style>", unsafe_allow_html=True)
@@ -44,6 +43,8 @@ def esc(value):
 
 
 def navigate(page, task_id=None):
+    if page == "battle" and st.session_state.page in ("home", "create", "gallery"):
+        st.session_state.battle_origin = "home" if st.session_state.page == "create" else st.session_state.page
     st.session_state.page = page
     st.session_state.selected = task_id
     st.session_state.effect = None
@@ -101,10 +102,11 @@ page = st.session_state.page
 
 if page == "home":
     markup('<div class="page-heading"><h1>Quest board</h1><span>QUEST BOARD</span></div><div class="subcopy">Every small step is a battle worth winning.</div>')
-    markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-art">{monster_svg("Other", "hero")}</div></div>')
-    if st.button("Summon a new quest", type="primary", use_container_width=True):
-        navigate("create")
-        st.rerun()
+    with st.container(key="hero_card"):
+        markup(f'<div class="hero"><span class="hero-label">YOUR NEXT ADVENTURE</span><h2>Big quest?<br>Small steps.</h2><p>Break it down. Finish a step.<br>Land your next hit.</p><div class="hero-art">{monster_svg("Fitness", "hero")}</div></div>')
+        if st.button("Summon a new quest", type="primary", use_container_width=True):
+            navigate("create")
+            st.rerun()
     markup(f'<div class="stats"><div class="stat"><strong>{len(active):02d}</strong><small>Active quests</small></div><div class="stat"><strong>{len(defeated):02d}</strong><small>Monsters defeated</small></div><div class="stat"><strong>{finished_steps:02d}</strong><small>Steps completed</small></div></div>')
     markup(f'<div class="section-line"><h2>Active quests</h2><small>{len(active)} quests</small></div>')
     if not active:
@@ -121,13 +123,12 @@ elif page == "create":
     markup('<div class="page-heading"><h1>Summon a monster</h1><span>NEW QUEST</span></div><div class="subcopy">Name your quest. Make the first step easy to start.</div>')
     title = st.text_input("Quest name", key="new_title", placeholder="e.g. Finish my A3 project", max_chars=60)
     category = st.selectbox("Quest type", ["Auto-detect"] + list(CATEGORIES), key="new_category")
-    markup('<div class="summon-hint"><span>?</span><div><strong>A surprise is waiting.</strong><small>Your monster appears after you summon it.</small></div></div>')
     markup('<div class="section-line"><h2>Quest steps</h2><small>At least 2 · max. 24</small></div>')
     with st.form("add_step_form", clear_on_submit=True):
         with st.container(key="step_editor"):
             field, action = st.columns([3, 1], vertical_alignment="bottom")
             with field:
-                draft_title = st.text_input("Add a small step", placeholder="One action you can start", max_chars=120)
+                draft_title = st.text_input("Add a small step", placeholder="e.g. Read one page", max_chars=120)
             with action:
                 add = st.form_submit_button("Add step", use_container_width=True)
     if add:
@@ -168,7 +169,7 @@ elif page == "battle":
     if task is None:
         navigate("home")
         st.rerun()
-    st.button("Back to quests", key="back_to_quests", on_click=navigate, args=("home",))
+    st.button("Back", key="back_to_quests", help="Return to the previous screen", on_click=navigate, args=(st.session_state.get("battle_origin", "home"),))
     name = CATEGORIES[task["category"]][0]
     hp, maximum = health(task)
     victory = is_defeated(task)
@@ -198,7 +199,7 @@ elif page == "battle":
         st.button("Abandon quest", key="abandon_button", disabled=not confirmed, on_click=abandon, args=(task["id"],))
 
 elif page == "gallery":
-    markup('<div class="page-heading"><h1>Collection</h1><span>MONSTER COLLECTION</span></div><div class="subcopy">Tap a card’s star to revisit its quest.</div>')
+    markup('<div class="page-heading"><h1>Collection</h1><span>MONSTER COLLECTION</span></div><div class="subcopy">Revisit the quests behind your victories.</div>')
     if not defeated:
         markup('<div class="empty-state"><div class="empty-icon">♜</div><h3>Your first trophy is out there</h3><p>Complete every step of a quest<br>to collect its monster card here.</p></div>')
         st.button("Back to quests", on_click=navigate, args=("home",), type="primary")
@@ -214,11 +215,13 @@ elif page == "gallery":
                         markup(f'<div class="trophy"><div class="trophy-header"><strong>{name}</strong></div><div class="trophy-art">{monster_svg(task["category"],task["title"],trophy=True)}</div><div class="trophy-stars" aria-label="Level {level}" title="Level {level}">{stars}</div><div class="task-title" title="{esc(task["title"])}">{esc(task["title"])}</div></div>')
                         st.button("View quest", key=f"trophy_{task['id']}", help="View this quest and its completed steps", on_click=navigate, args=("battle", task["id"]), use_container_width=True)
 
-markup('<div class="save-note">LOCAL SAVE · YOUR ADVENTURE, YOUR PACE</div><div class="nav-clearance" aria-hidden="true"></div>')
-with st.container(key="bottom_nav"):
-    for column, (label, target) in zip(st.columns(3), [("Quests", "home"), ("Summon", "create"), ("Collection", "gallery")]):
-        with column:
-            st.button(label, key=f"nav_{target}", type="primary" if page == target or (page == "battle" and target == "home") else "secondary", on_click=navigate, args=(target,), use_container_width=True)
+markup('<div class="save-note">LOCAL SAVE · YOUR ADVENTURE, YOUR PACE</div>')
+markup('<div class="nav-clearance" aria-hidden="true"></div>' if page != "battle" else '<div class="page-end" aria-hidden="true"></div>')
+if page in ("home", "create", "gallery"):
+    with st.container(key="bottom_nav"):
+        for column, (label, target) in zip(st.columns(3), [("Quests", "home"), ("Summon", "create"), ("Collection", "gallery")]):
+            with column:
+                st.button(label, key=f"nav_{target}", type="primary" if page == target or (page == "battle" and target == "home") else "secondary", on_click=navigate, args=(target,), use_container_width=True)
 
 # Page changes should not inherit the previous page's scroll position.
 route = (page, st.session_state.selected)
