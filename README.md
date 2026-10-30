@@ -25,12 +25,12 @@ Python 3.13 is selected by `.python-version`; `uv.lock` records exact dependency
 ## Interaction
 
 1. Choose **Summon**, enter a quest name, and select a type or use **Auto-detect**.
-2. Add 1–24 small steps. Each step adds one monster level and 100 HP.
+2. Add 2–24 small steps. Each step adds one monster level and 100 HP. The summon button appears only after two steps are added, and the monster is revealed only after creation.
 3. The **Quests** screen shows all active monsters. Choose **Enter battle** for a task.
-4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Use **Undo step** after an accidental completion.
-5. Completing every step adds the monster to **Collection**. Undoing a step moves it back to active quests.
+4. Finish a step in real life, then press **Complete & strike!**. Health decreases, progress updates, and the monster reacts. Use **Undo** after an accidental completion.
+5. Completing every step adds the monster to **Collection**. Tap the star below a card to reopen its quest. Undoing a step moves it back to active quests.
 
-The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its bottom navigation has original vector icons and leaves space for the end of long pages.
+The interface stays within a 460px phone-style frame on desktop and adapts to narrower screens. Its compact bottom navigation uses original vector icons, reveals a label only for the selected tab, and leaves space for the end of long pages. Type uses one system font and a shared five-size scale without text outlines.
 
 ## Files and development
 
@@ -43,7 +43,7 @@ The interface stays within a 460px phone-style frame on desktop and adapts to na
 
 Progress is saved to `task-monster/local_data/tasks.json`. This directory is ignored by Git, so personal tasks are not uploaded. Existing category names from the first prototype are migrated to English; user-entered task names and step text are preserved as written.
 
-This is a single-user local prototype, with one shared save file per server. It has no accounts, cloud sync or concurrent-edit protection. Different browsers connected to the same server share that file. Quest classification uses local English keywords and deterministic rules, not an AI service. Six species are available; similar tasks may have similar monsters. All steps deal equal damage, and the app relies on the player to report real completion. XP equals completed steps × 10 and decreases when a completion is undone.
+This is a single-user local prototype, with one shared save file per server. It has no accounts, cloud sync or concurrent-edit protection. Different browsers connected to the same server share that file. Quest classification uses local English keywords and deterministic rules, not an AI service. Six species are available; similar tasks may have similar monsters. All steps deal equal damage, and the app relies on the player to report real completion. The purple gem balance equals completed steps × 10 and decreases when a completion is undone. Abandoning a quest removes its contribution to this balance.
 
 ## Optional local verification
 

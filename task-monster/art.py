@@ -4,6 +4,19 @@ import hashlib
 from game import CATEGORIES
 
 
+def gem_svg():
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><path d="M12 5 L36 5 L45 19 L24 44 L3 19Z" fill="#ae78fa" stroke="#35234d" stroke-width="3" stroke-linejoin="round"/><path d="M12 5 L18 19 L3 19 M36 5 L30 19 L45 19 M18 19 L24 44 L30 19Z" fill="#d6b1ff" stroke="#7947bd" stroke-width="2"/><path d="M12 5 L36 5 L30 19 L18 19Z" fill="#ead4ff"/><path d="M8 18 L12 11" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>'
+
+
+def star_svg(filled=True):
+    fill = "#ffce5a" if filled else "#786a83"
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 L30 16 L45 18 L34 29 L37 44 L24 37 L11 44 L14 29 L3 18 L18 16Z" fill="{fill}" stroke="#352637" stroke-width="3" stroke-linejoin="round"/><path d="M24 9 L27 19 L37 20" fill="none" stroke="#fff2b1" stroke-width="2" stroke-linecap="round"/></svg>'
+
+
+def remove_svg():
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M8 9 L10 27 L23 27 L25 9 M5 8 L28 8 M12 8 L12 4 L21 4 L21 8 M14 13 L14 23 M20 13 L20 23" fill="none" stroke="#ffe0e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+
+
 def navigation_svg(page):
     """Small original game icons for the three navigation tabs."""
     if page == "home":

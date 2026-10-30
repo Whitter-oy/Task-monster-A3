@@ -16,10 +16,10 @@ Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C 
 ## Play
 
 - **Quests:** browse active monsters, level, health and progress, then select **Enter battle**.
-- **Summon:** name a task, select a type or use keyword-based **Auto-detect**, and add steps one by one.
-- **Level and health:** a quest has 1–24 steps. Each step adds one level and 100 HP.
-- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. A weakened monster changes expression. Use **Undo step** if needed.
-- **Collection:** completed quests appear as cards. **View quest** opens the steps; undoing completion returns the quest to the board.
+- **Summon:** name a task, choose a type or **Auto-detect**, and add at least two steps. The small green Add step action is separate from the gold Summon monster action. Red trash buttons remove draft steps. The monster stays a surprise until summoning.
+- **Level and health:** a quest has 2–24 steps. Each step adds one level and 100 HP.
+- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. A weakened monster changes expression. Use **Undo** if needed.
+- **Collection:** completed quests appear as cards. The star button below each card opens its quest; undoing completion returns the quest to the board.
 - **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
 
 ## Screenshots
@@ -38,9 +38,9 @@ Empty input and too many steps produce messages. An unreadable or unsupported sa
 
 ## Limitations
 
-This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Task names affect decorations and types select six species. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and XP is completed steps × 10. Undo reverses XP.
+This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Task names affect decorations and types select six species. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and the gem balance is completed steps × 10. Undoing a step or abandoning its quest reverses the corresponding rewards.
 
-The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Animation respects reduced-motion preferences.
+The responsive web interface has a 460px phone frame, an aligned icon dock and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and star-shaped view actions.
 
 ## Optional local checks
 

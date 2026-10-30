@@ -8,7 +8,7 @@ from unittest.mock import patch
 from xml.etree import ElementTree
 from streamlit.testing.v1 import AppTest
 from art import monster_svg
-from game import CATEGORIES, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step
+from game import CATEGORIES, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, gem_balance
 
 APP = Path(__file__).resolve().parents[1] / "app.py"
 
@@ -41,18 +41,25 @@ class TaskMonsterTests(unittest.TestCase):
         self.click("Summon monster")
         return self.app.session_state["tasks"][-1]["id"]
 
-    def test_empty_inputs_and_multiple_tasks(self):
+    def test_two_step_gate_and_mystery_before_summoning(self):
         self.button("nav_create")
-        self.click("Summon monster")
-        self.assertIn("quest name", self.app.warning[0].value)
+        self.assertFalse(any(b.label == "Summon monster" for b in self.app.button))
+        self.assertFalse(any('<div class="monster-mini"' in m.value or "MONSTER PREVIEW" in m.value for m in self.app.markdown))
         next(f for f in self.app.text_input if f.label == "Add a small step").set_value("   ")
         self.click("Add step")
         self.assertIn("cannot be empty", self.app.warning[0].value)
-        self.app.text_input(key="new_title").set_value("Study").run()
+        for index in range(2):
+            next(f for f in self.app.text_input if f.label == "Add a small step").set_value(f"Action {index}")
+            self.click("Add step")
+            self.assertEqual(any(b.label == "Summon monster" for b in self.app.button), index == 1)
         self.click("Summon monster")
-        self.assertIn("steps", self.app.warning[0].value)
+        self.assertIn("quest name", self.app.warning[0].value)
+        self.button("remove_draft_0")
+        self.assertFalse(any(b.label == "Summon monster" for b in self.app.button))
+
+    def test_multiple_tasks(self):
         first = self.add_task("Revise for exams")
-        second = self.add_task("Go for a run", ("Put on trainers",))
+        second = self.add_task("Go for a run", ("Put on trainers", "Run for ten minutes"))
         self.assertNotEqual(first, second)
         self.assertEqual(len(self.app.session_state["tasks"]), 2)
         self.assertNotEqual(*[t["category"] for t in self.app.session_state["tasks"]])
@@ -66,7 +73,9 @@ class TaskMonsterTests(unittest.TestCase):
         self.button(f"attack_{task_id}_1")
         self.assertTrue(is_defeated(self.app.session_state["tasks"][0]))
         self.button("nav_gallery")
-        self.assertTrue(any("monsters defeated" in m.value and "01" in m.value for m in self.app.markdown))
+        self.assertTrue(any("trophy-stars" in m.value for m in self.app.markdown))
+        self.assertFalse(any("collection-intro" in m.value for m in self.app.markdown))
+        self.assertEqual(len([b for b in self.app.button if b.label == "View quest"]), 1)
         self.button(f"trophy_{task_id}")
         self.button(f"attack_{task_id}_0")
         self.assertEqual(health(self.app.session_state["tasks"][0]), (100, 200))
@@ -119,7 +128,8 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertNotEqual(monster_svg("Study", "a", .75), monster_svg("Study", "a", trophy=True))
 
     def test_legacy_category_migrates_without_changing_user_content(self):
-        task = create_task("My existing task", ["My existing step"])
+        task = create_task("My existing task", ["My existing step", "Another step"])
+        task["steps"] = task["steps"][:1]
         task["category"] = "\u5b66\u4e60"
         save_tasks(self.file, [task])
         tasks, error = load_tasks(self.file)
@@ -127,6 +137,27 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertEqual(tasks[0]["category"], "Study")
         self.assertEqual(tasks[0]["title"], "My existing task")
         self.assertEqual(tasks[0]["steps"][0]["title"], "My existing step")
+
+    def test_gems_follow_completions_and_cannot_be_farmed(self):
+        task_id = self.add_task("Finish A3")
+        self.assertEqual(gem_balance(self.app.session_state["tasks"]), 0)
+        self.button(f"attack_{task_id}_0")
+        self.assertEqual(gem_balance(self.app.session_state["tasks"]), 10)
+        self.assertTrue(any("reward = " in frame.proto.srcdoc for frame in self.app.get("iframe")))
+        self.assertFalse(any("✓" in m.value for m in self.app.markdown))
+        self.app.run()
+        self.assertFalse(any("reward = " in frame.proto.srcdoc for frame in self.app.get("iframe")))
+        self.button(f"attack_{task_id}_0")
+        self.assertEqual(gem_balance(self.app.session_state["tasks"]), 0)
+        self.button(f"attack_{task_id}_0")
+        self.assertEqual(gem_balance(self.app.session_state["tasks"]), 10)
+        restored = AppTest.from_file(str(APP)).run()
+        self.assertFalse(restored.exception)
+        self.assertEqual(gem_balance(restored.session_state["tasks"]), 10)
+
+    def test_new_single_step_tasks_are_rejected(self):
+        with self.assertRaises(ValueError):
+            create_task("Too small", ["Only one step"])
 
     def test_open_legacy_creation_screen_remains_usable(self):
         self.app.session_state["page"] = "create"

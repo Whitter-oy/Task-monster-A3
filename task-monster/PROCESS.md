@@ -57,6 +57,20 @@ Buttons were changed to bright green and gold with highlights and raised edges. 
 
 This feedback came from the project author during development. It does not replace the required trial with at least one other person.
 
+## 30 October 2026: interaction hierarchy and reward feedback
+
+The author requested a smaller dock, selected-tab-only labels and playful transitions. The dock was reduced from 106px to 74px, with a short icon bounce and enough page-end clearance. Labels remain accessible to assistive technology when visually hidden.
+
+The author also found button lettering hard to read. The previous multiple text shadows and heavy synthetic weight were removed. Typography now uses Arial with shared sizes of 11, 13, 15, 20 and 26 pixels, rather than many local sizes. Green means add/complete, gold means summon or a major continuation, muted purple means undo/back, and red means remove/abandon.
+
+The large collection count panel was removed. Defeated monsters now appear in three columns as framed cards, with level stars and a star-shaped button to reopen each quest. Text descriptions remain available through the button label and tooltip.
+
+Creation no longer previews a monster. The app requires at least two steps before showing Summon monster, and the model also rejects new single-step quests. Old single-step saves remain readable. Add step is a small aligned action; each draft has a red trash action on the right. Completed battle steps use a purple gem badge and a compact Undo action instead of a green check box and a full-width green button.
+
+XP was replaced with a purple gem wallet derived from completed steps, at 10 gems per step. Undo reverses the reward and cannot accumulate extra gems. A small JavaScript presentation effect animates five original SVG gems from the completed step to the wallet, then pulses the wallet; Python remains responsible for all reward values and persistence. Reduced-motion preferences skip the flight.
+
+Verification: twelve local regression checks passed, including the two-step gate, hidden preview, legacy saves, rewards, undo/re-completion, persistence and consumption of the reward event after one render. Browser checks confirmed only one visible tab label, a 74px dock, no button text shadows, an approximately 78px Add step button and right-aligned red removal actions. At 320px and 1280px viewports the page and dock edges matched and the final action could scroll above the dock. During the browser reward test, five flying gem elements were visible and the wallet moved from 130 to 140, with undo returning it to 130. Demonstration data was isolated from personal saves.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

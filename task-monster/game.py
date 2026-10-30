@@ -42,17 +42,22 @@ def category_for(title):
     return list(CATEGORIES)[int(hashlib.sha256(title.encode()).hexdigest()[:8], 16) % 6]
 
 
-def create_task(title, step_titles, category="Auto-detect"):
+def validate_inputs(title, step_titles, category, minimum_steps=2):
     title = title.strip()
     steps = [s.strip() for s in step_titles]
     if not title or len(title) > 60:
         raise ValueError("Enter a quest name with 1–60 characters.")
-    if not 1 <= len(steps) <= 24 or any(not s or len(s) > 120 for s in steps):
-        raise ValueError("Add 1–24 steps, each with 1–120 characters.")
+    if not minimum_steps <= len(steps) <= 24 or any(not s or len(s) > 120 for s in steps):
+        raise ValueError(f"Add {minimum_steps}–24 steps, each with 1–120 characters.")
     if category == "Auto-detect":
         category = category_for(title)
     if category not in CATEGORIES:
         raise ValueError("Choose a valid quest type.")
+    return title, steps, category
+
+
+def create_task(title, step_titles, category="Auto-detect"):
+    title, steps, category = validate_inputs(title, step_titles, category)
     return {
         "id": uuid4().hex, "title": title, "category": category,
         "steps": [{"title": s, "done": False} for s in steps],
@@ -62,6 +67,11 @@ def create_task(title, step_titles, category="Auto-detect"):
 
 def completed_count(task):
     return sum(1 for step in task["steps"] if step["done"])
+
+
+def gem_balance(tasks):
+    """Derived rewards cannot be farmed by undoing and repeating a step."""
+    return sum(completed_count(task) for task in tasks) * 10
 
 
 def is_defeated(task):
@@ -102,7 +112,8 @@ def load_tasks(path):
                 if not isinstance(step, dict) or not isinstance(step.get("title"), str) or type(step.get("done")) is not bool:
                     raise ValueError("invalid step")
             task["category"] = normalize_category(task.get("category"))
-            create_task(task["title"], [s["title"] for s in task["steps"]], task["category"])
+            # Keep single-step quests saved by older releases usable.
+            validate_inputs(task["title"], [s["title"] for s in task["steps"]], task["category"], minimum_steps=1)
         return tasks, None
     except (OSError, ValueError, KeyError, TypeError):
         return [], "Could not read the local save. The original file is preserved. Back it up or repair it before reopening."
