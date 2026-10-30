@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 from xml.etree import ElementTree
 from streamlit.testing.v1 import AppTest
-from art import monster_svg
+from art import monster_svg, monster_state
 from game import CATEGORIES, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, gem_balance, deadline_details
 
 APP = Path(__file__).resolve().parents[1] / "app.py"
@@ -191,26 +191,60 @@ class TaskMonsterTests(unittest.TestCase):
         self.button("back_to_quests")
         self.assertEqual(self.app.session_state["page"], "gallery")
 
+    def test_every_species_changes_expression_and_undo_restores_it(self):
+        for category in CATEGORIES:
+            states = [monster_svg(category, damage=damage) for damage in (0, .25, .75)]
+            self.assertEqual(len(set(states)), 3)
+            for state, drawing in zip(("healthy", "hurt", "weak"), states):
+                self.assertIn(f'data-monster-state="{state}"', drawing)
+                ElementTree.fromstring(drawing)
+            self.assertIn('data-monster-state="collected"', monster_svg(category, damage=1, trophy=True))
+        task = create_task("Read", ["One", "Two", "Three"])
+        toggle_step(task, 0)
+        toggle_step(task, 1)
+        self.assertEqual(monster_state(1-health(task)[0]/health(task)[1]), "weak")
+        toggle_step(task, 1)
+        self.assertEqual(monster_state(1-health(task)[0]/health(task)[1]), "hurt")
+        toggle_step(task, 0)
+        self.assertEqual(monster_state(1-health(task)[0]/health(task)[1]), "healthy")
+
     def test_deadline_widgets_save_hong_kong_time_and_show_on_active_card(self):
         self.button("nav_create")
         self.app.text_input(key="new_title").set_value("Prepare a presentation").run()
-        self.app.date_input(key="new_due_date").set_value(date(2026,11,1)).run()
-        self.app.time_input(key="new_due_time").set_value(time(23,59)).run()
+        self.app.selectbox(key="deadline_month").select("November").run()
+        self.app.number_input(key="deadline_year").set_value(2026).run()
+        self.button("deadline_day_2026_11_1")
+        self.app.selectbox(key="deadline_hour").select(23).run()
+        self.app.selectbox(key="deadline_minute").select(59).run()
         for step in ("Draft the slides", "Rehearse"):
             next(f for f in self.app.text_input if f.label == "Add a small step").set_value(step)
             self.click("Add step")
         self.click("Summon monster")
         task=self.app.session_state["tasks"][0]
+        self.assertIsNone(self.app.session_state["new_due_date"])
         self.assertEqual(task["due_at"], "2026-11-01T15:59:00+00:00")
         self.assertEqual(load_tasks(self.file)[0][0]["due_at"],task["due_at"])
         self.button("nav_home")
-        self.assertTrue(any("01 Nov 2026 · 23:59 HKT" in m.value for m in self.app.markdown))
+        self.assertTrue(any("01 Nov 2026 · 23:59" in m.value for m in self.app.markdown))
+
+    def test_english_calendar_handles_leap_day_and_clear(self):
+        self.button("nav_create")
+        self.assertEqual(len(self.app.date_input), 0)
+        self.assertEqual(len(self.app.time_input), 0)
+        self.app.selectbox(key="deadline_month").select("February").run()
+        self.app.number_input(key="deadline_year").set_value(2028).run()
+        self.button("deadline_day_2028_2_29")
+        self.assertEqual(self.app.session_state["new_due_date"], date(2028,2,29))
+        self.app.number_input(key="deadline_year").set_value(2027).run()
+        self.assertFalse(any(b.key == "deadline_day_2027_2_29" for b in self.app.button))
+        self.button("clear_deadline")
+        self.assertIsNone(self.app.session_state["new_due_date"])
 
     def test_deadline_optional_legacy_and_overdue_status(self):
         task=create_task("Read", ["One", "Two"], due_at="2026-10-31T10:00:00+08:00")
         label,overdue=deadline_details(task,datetime(2026,10,31,3,tzinfo=timezone.utc))
         self.assertTrue(overdue)
-        self.assertIn("10:00 HKT",label)
+        self.assertIn("10:00",label)
         self.assertFalse(deadline_details(task,datetime(2026,10,31,1,tzinfo=timezone.utc))[1])
         task.pop("due_at")
         save_tasks(self.file,[task])

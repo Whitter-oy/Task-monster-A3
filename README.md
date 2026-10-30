@@ -39,11 +39,11 @@ The interface stays within a 460px phone-style frame on desktop and adapts to na
 - [Interface](task-monster/app.py), [task and storage logic](task-monster/game.py), [artwork rendering and icons](task-monster/art.py)
 - [Dependency metadata](task-monster/pyproject.toml) and [lockfile](task-monster/uv.lock)
 
-[Active-card deadlines](task-monster/assets/screenshots/deadlines.jpg).
+[Active-card deadlines](task-monster/assets/screenshots/deadlines.jpg), [English calendar](task-monster/assets/screenshots/calendar.jpg).
 
 ## Deadlines
 
-The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed as Hong Kong time (HKT) on active quest cards. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. Browser date/time controls may follow the device locale.
+The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed in Hong Kong time on active quest cards, without a timezone suffix. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. The custom calendar uses fixed English month and weekday names. The date, hour and minute controls do not depend on the browser locale. Deadline labels and values share one row.
 
 ## Sound
 
@@ -69,6 +69,6 @@ There is no GitHub automatic-check workflow. With Node.js installed, run the opt
 
 ## Credits and submission status
 
-Python lists, dictionaries, functions, state and Streamlit concepts build on SD5913 classroom material. Monster artwork and the group portrait were supplied by the project author on 31 October 2026. Optimized transparent WebP files are bundled in task-monster/assets/monsters with source filenames and hashes in SOURCES.json. Navigation and feedback icons are original SVG drawn in code. Lilita One by Juan Montoreano is bundled under the SIL Open Font License; its license is included in task-monster/assets/fonts/OFL.txt. Game screenshots supplied by the project author informed visual direction; their characters, icons and other assets were not copied. Codex assisted with design, code, testing and documentation; see PROCESS for decisions and revisions.
+Python lists, dictionaries, functions, state and Streamlit concepts build on SD5913 classroom material. Monster artwork and the group portrait were supplied by the project author on 31 October 2026. Optimized transparent WebP files are bundled in task-monster/assets/monsters with source filenames and hashes in SOURCES.json. Hurt and weak expression variants were created with OpenAI built-in image generation from those supplied designs. Prompts are recorded in assets/monsters/EXPRESSION-PROMPTS.json. Navigation and feedback icons are original SVG drawn in code. Lilita One by Juan Montoreano is bundled under the SIL Open Font License; its license is included in task-monster/assets/fonts/OFL.txt. Game screenshots supplied by the project author informed visual direction; their characters, icons and other assets were not copied. Codex assisted with design, code, testing and documentation; see PROCESS for decisions and revisions.
 
 A real trial with at least one other person and the resulting observation-based decision still need to be recorded before submission. Git history records actual revisions.

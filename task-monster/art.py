@@ -1,4 +1,4 @@
-"""Original game icons and supplied monster artwork embedded for offline use."""
+"""Game icons, supplied monsters and generated expressions embedded for offline use."""
 
 import base64
 from functools import lru_cache
@@ -30,7 +30,7 @@ def navigation_svg(page):
     return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g stroke="#211b32" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">{drawing}</g></svg>'
 
 
-@lru_cache(maxsize=7)
+@lru_cache(maxsize=19)
 def image_data(filename):
     data = (Path(__file__).resolve().parent / "assets" / "monsters" / filename).read_bytes()
     return "data:image/webp;base64," + base64.b64encode(data).decode()
@@ -40,12 +40,23 @@ def monster_group_svg():
     return f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="All six Task Monster characters" viewBox="0 0 1254 1254"><image href="{image_data("group.webp")}" width="1254" height="1254"/></svg>'
 
 
+def monster_state(damage=0, trophy=False):
+    """Damage is the completed-step fraction, so undo restores the prior state."""
+    if trophy:
+        return "collected"
+    if damage >= .65:
+        return "weak"
+    if damage > 0:
+        return "hurt"
+    return "healthy"
+
+
 def monster_svg(category, seed="", damage=0, trophy=False):
-    """Wrap the supplied character in SVG for existing sizing and hit animation."""
+    """Select real expression artwork using the same HP source as the health bar."""
     name = CATEGORIES[category][0]
-    filename = name.lower().replace(" ", "-") + ".webp"
-    tilt = -5 if damage >= .65 and not trophy else 0
-    dim = 'opacity=".82"' if damage >= .65 and not trophy else ''
-    sweat = '<path d="M242 55Q254 35 254 57Q252 69 244 64Z" fill="#9bf6ff" stroke="#30203c" stroke-width="2"/>' if damage > 0 and not trophy else ''
+    state = monster_state(damage, trophy)
+    suffix = f"-{state}" if state in ("hurt", "weak") else ""
+    filename = name.lower().replace(" ", "-") + suffix + ".webp"
+    tilt = -3 if state == "weak" else 0
     sparkle = '<path d="M263 26L268 38L280 43L268 48L263 60L258 48L246 43L258 38Z" fill="#ffe08a" stroke="#30203c" stroke-width="2"/>' if trophy else ''
-    return f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{name}" viewBox="0 0 300 260"><g transform="rotate({tilt} 150 140)" {dim}><image href="{image_data(filename)}" width="300" height="260" preserveAspectRatio="xMidYMid meet"/></g>{sweat}{sparkle}</svg>'
+    return f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{name} · {state}" data-monster-state="{state}" viewBox="0 0 300 260"><g transform="rotate({tilt} 150 140)"><image href="{image_data(filename)}" width="300" height="260" preserveAspectRatio="xMidYMid meet"/></g>{sparkle}</svg>'

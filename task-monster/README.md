@@ -18,7 +18,7 @@ Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C 
 - **Quests:** browse active monsters, level, health and progress, then select **Enter battle**.
 - **Summon:** name a task, optionally choose its deadline in Hong Kong time, choose a type or **Auto-detect**, and add at least two steps. The small green Add step action is separate from the gold Summon monster action. Red trash buttons remove draft steps. The monster stays a surprise until summoning.
 - **Level and health:** a quest has 2–24 steps. Each step adds one level and 100 HP.
-- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. Damage adds tilt, dimming and a small hit marker to the supplied character artwork. Completed steps move to the bottom in completion order. Undo is available while a quest is active. The last step opens a celebration dialog with a special victory cue; closing it returns home.
+- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. Actual expression artwork changes from healthy to hurt after the first hit, then weak at 35% HP or less. Undo restores the matching expression; collected monsters return to their cheerful artwork. Completed steps move to the bottom in completion order. Undo is available while a quest is active. The last step opens a celebration dialog with a special victory cue; closing it returns home.
 - **Collection:** completed quests appear as cards. The **View quest** button below each card opens a read-only recap with its completion time in Hong Kong time, without health or editing controls.
 - **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
 
@@ -30,11 +30,11 @@ Fictional demonstration tasks, not records of user testing:
 
 [Creation page](assets/screenshots/create.jpg) · [Grouped steps and sound switch](assets/screenshots/steps.jpg) · [Victory](assets/screenshots/victory.jpg) · [Read-only recap](assets/screenshots/review.jpg).
 
-[Active-card deadlines](assets/screenshots/deadlines.jpg).
+[Active-card deadlines](assets/screenshots/deadlines.jpg), [English calendar](assets/screenshots/calendar.jpg).
 
 ## Deadlines
 
-The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed as Hong Kong time (HKT) on active quest cards. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. Browser date/time controls may follow the device locale.
+The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed in Hong Kong time on active quest cards, without a timezone suffix. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. The custom calendar uses fixed English month and weekday names. The date, hour and minute controls do not depend on the browser locale. Deadline labels and values share one row.
 
 ## Sound
 
@@ -66,6 +66,6 @@ Tests cover multiple tasks, damage, undo, collection, persistence, invalid saves
 
 ## Credits and next steps
 
-The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. Monster images and the group portrait were supplied by the project author; assets/monsters/SOURCES.json records their source filenames and hashes. `art.py` renders those images and original SVG navigation/feedback icons; Lilita One by Juan Montoreano is bundled under the SIL Open Font License (see assets/fonts/OFL.txt). Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
+The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. Monster images and the group portrait were supplied by the project author; assets/monsters/SOURCES.json records their source filenames and hashes. Hurt and weak expression variants were created with OpenAI built-in image generation using the supplied designs; prompts are recorded in assets/monsters/EXPRESSION-PROMPTS.json. `art.py` renders those images and original SVG navigation/feedback icons; Lilita One by Juan Montoreano is bundled under the SIL Open Font License (see assets/fonts/OFL.txt). Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
 
 Before submission, complete a real trial with another person, record the observation and design decision, follow the run instructions from a fresh terminal, and verify signed-out access to the public repository.

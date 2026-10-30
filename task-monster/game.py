@@ -162,4 +162,4 @@ def deadline_details(task, now=None):
     due = datetime.fromisoformat(value)
     overdue = due < (now or datetime.now(timezone.utc))
     local = due.astimezone(ZoneInfo("Asia/Hong_Kong"))
-    return local.strftime("%d %b %Y · %H:%M HKT"), overdue
+    return local.strftime("%d %b %Y · %H:%M"), overdue

@@ -121,6 +121,16 @@ The new optional date/time controls appear immediately beneath Quest Name. The s
 
 Seventeen Python/AppTest checks passed, including deadline widget entry, UTC conversion, save/reload, active-card formatting, overdue status, invalid input and legacy compatibility. Browser checks exercised the calendar and time controls, verified all supplied species and inspected the HKT deadline/overdue cards. All demonstration data is fictional; no independent user trial is claimed.
 
+## English deadline picker and health expressions
+
+The author's next review found Chinese month/day strings inside the browser-localized date picker, low Undo lettering, a distant group portrait and a two-line deadline card. The native date/time widgets were replaced with an English calendar built from Python's calendar module, fixed English month/weekday names, and 24-hour hour/minute selects. Leap years and month lengths use calendar calculations. Clear date restores an optional deadline; successfully summoning clears the draft date. Deadlines still use Asia/Hong_Kong and save in UTC, but the active-card date omits HKT and sits on the label's row.
+
+Undo now centers its nested Markdown line box with a one-pixel optical adjustment and an explicit 48×36px button, so absolute label positioning cannot collapse its width. The group portrait moves four pixels inward; smaller-phone copy scales to avoid overlap.
+
+OpenAI built-in image generation produced a two-frame transparent expression sheet for each of the six supplied species. Each prompt locks the supplied identity, palette, outline and glossy style while changing the eyes, mouth and small pose details. Left frames depict hurt/determined characters; right frames depict exhausted, worried characters with drooping appendages. The sheets were inspected, split into separate frames and optimized to transparent WebP. Exact prompts are saved in assets/monsters/EXPRESSION-PROMPTS.json and provenance in SOURCES.json. The original cheerful artwork remains the full-health and collected state. Damage switches to hurt after any completed step, then weak at 35% HP or less. Undo uses the same recalculated health to restore the correct image. This replaces the prior tilt/dim-only damage treatment.
+
+Nineteen Python/AppTest checks passed, including all species/state selections, undo restoration, English controls, leap-day selection, clearing the date, UTC persistence and legacy saves. Browser checks exercised healthy → hurt → weak → undo transitions, measured Undo at 48×36px with its text center one pixel above the button center, and verified English calendar selection at 390×844 and 320×568. The narrow calendar scrolls internally to reach its lower rows. Screenshots use isolated fictional data; no independent user trial is claimed.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.

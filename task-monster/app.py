@@ -3,12 +3,13 @@ import json
 import base64
 import os
 from pathlib import Path
-from datetime import datetime, time
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import streamlit as st
 
-from art import monster_group_svg, monster_svg, navigation_svg, gem_svg, star_svg, remove_svg
+from deadline_picker import deadline_picker
+from art import monster_group_svg, monster_svg, monster_state, navigation_svg, gem_svg, star_svg, remove_svg
 from game import CATEGORIES, category_for, completed_count, create_task, health, is_defeated, load_tasks, save_tasks, toggle_step, normalize_category, gem_balance, ordered_steps, deadline_details
 
 ROOT = Path(__file__).resolve().parent
@@ -129,12 +130,7 @@ if page == "home":
 elif page == "create":
     markup('<div class="page-heading"><h1>Summon a monster</h1><span>NEW QUEST</span></div><div class="subcopy">Name your quest. Make the first step easy to start.</div>')
     title = st.text_input("Quest name", key="new_title", placeholder="e.g. Finish my A3 project", max_chars=60)
-    date_column, time_column = st.columns([2, 1])
-    with date_column:
-        due_date = st.date_input("Deadline date (HKT)", value=None, format="DD/MM/YYYY", key="new_due_date")
-    with time_column:
-        due_time = st.time_input("Time (HKT)", value=time(23, 59), step=60, disabled=due_date is None, key="new_due_time")
-    st.caption("Optional · deadlines use Hong Kong time")
+    due_date, due_time = deadline_picker()
     category = st.selectbox("Quest type", ["Auto-detect"] + list(CATEGORIES), key="new_category")
     with st.container(key="create_steps_panel"):
         markup('<div class="section-line"><h2>Quest steps</h2><small>At least 2 · max. 24</small></div>')
@@ -169,6 +165,7 @@ elif page == "create":
                     tasks.append(task)
                     persist()
                     st.session_state.draft = []
+                    st.session_state.new_due_date = None
                     st.session_state.notice = f"{task['title']} is ready for battle!"
                     navigate("battle", task["id"])
                     st.rerun()
@@ -206,8 +203,10 @@ elif page in ("battle", "review"):
         except (ValueError, TypeError):
             completed = "Time unavailable for this older quest"
         markup(f'<div class="completion-date"><small>QUEST COMPLETED</small><strong>{esc(completed)}</strong></div>')
+    state = monster_state(1-hp/maximum, victory)
+    state_labels = {"healthy": "Ready for battle", "hurt": "Feeling the hits", "weak": "Low health · Keep going!", "collected": "QUEST COMPLETE · MONSTER COLLECTED"}
     floating = '<div class="damage">−100 HP<small>+10 gems</small></div>' if hit in ("attack", "victory") else ('<div class="damage">＋100 HP</div>' if hit == "undo" else '')
-    markup(f'<div class="arena {"victory" if victory else ""} {"hurt" if hit in ("attack", "victory") else ""}">{floating}<div class="arena-monster">{monster_svg(task["category"],task["title"],1-hp/maximum,victory)}</div><div class="arena-note">{"QUEST COMPLETE · MONSTER COLLECTED" if victory else "Finish a real-world step, then strike below"}</div></div>')
+    markup(f'<div class="arena {"victory" if victory else ""} {"hurt" if hit in ("attack", "victory") else ""}">{floating}<div class="arena-monster">{monster_svg(task["category"],task["title"],1-hp/maximum,victory)}</div><div class="arena-note">{state_labels[state]}</div></div>')
     with st.container(key="battle_steps_panel"):
         markup(f'<div class="section-line"><h2>Your steps · {completed_count(task)}/{len(task["steps"])}</h2><small>{"A quest worth remembering" if reviewing else "Each step deals 100 damage"}</small></div>')
         for i, step in (enumerate(task["steps"]) if reviewing else ordered_steps(task)):

@@ -36,5 +36,26 @@
       "source": "exec-f503df04-c751-4fa7-a1a1-216899998095.png",
       "source_sha256": "476b47bad6624bc340cf41d25a185656ee24132f4f380ac3a3fa85a342187b58"
     }
-  ]
+  ],
+  "expression_variants": {
+    "tool": "OpenAI built-in image generation",
+    "date": "2026-10-31",
+    "reference": "Supplied WebP artwork listed above",
+    "prompts": "EXPRESSION-PROMPTS.json",
+    "assets": [
+      "forest-sprout-hurt.webp",
+      "forest-sprout-weak.webp",
+      "ember-dragon-hurt.webp",
+      "ember-dragon-weak.webp",
+      "night-owl-hurt.webp",
+      "night-owl-weak.webp",
+      "clockwork-golem-hurt.webp",
+      "clockwork-golem-weak.webp",
+      "muse-ghost-hurt.webp",
+      "muse-ghost-weak.webp",
+      "stardust-slime-hurt.webp",
+      "stardust-slime-weak.webp"
+    ],
+    "processing": "Each two-frame transparent sprite sheet was split into its two frames, resized and converted to WebP. No code-drawn facial replacements."
+  }
 }
