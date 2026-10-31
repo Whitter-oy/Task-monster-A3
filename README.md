@@ -1,25 +1,12 @@
 # Task Monster
 
-**Small steps. Big wins.** Task Monster is a small interactive task tool for students who find large assignments difficult to start. Turn a real task into a quest, break it into manageable steps, and defeat a monster by finishing those steps.
+**Small steps. Big wins.** Task Monster turns a large task into a small adventure. Create a quest, break it into manageable steps, and defeat a friendly monster by completing those steps in real life. Each finished quest becomes a collectible card: a small record of something you have accomplished.
 
-**[Read the development process and classmate trial → PROCESS.md](PROCESS.md)**
-
-## The experience
-
-The intended user is a student with a task they know they need to do but keep putting off. The aim is to make the next small action clear and make progress visible. The app does not verify real-world work: the player decides when a step is finished.
-
-| Deliberate input | Program response | Feedback and next action |
-| --- | --- | --- |
-| Type a quest name, optionally set a deadline, and add 2–24 steps | Create a quest with a monster; each step contributes 100 HP | The quest appears on the board; choose **Enter battle** |
-| Finish a step in real life, then press **Complete & strike!** | Mark that step complete, recalculate health and award 10 gems | Health decreases, the expression changes, gems animate toward the wallet, and an optional sound plays |
-| Press **Undo** on an active quest | Restore the step, health and corresponding gem balance | The step returns to the pending group; the monster returns to its matching state |
-| Complete the final step | Save completion time and collect the monster | A victory dialog and optional fanfare appear; dismissing the dialog returns to the board |
-
-This is a working input → response → feedback loop, not a static illustration. The next action remains visible in the pending-step list. Back returns to the previous screen, and completed quests open as read-only recaps.
+I designed it for students who know what they need to do but find a large assignment difficult to start. The goal is to make the next action feel approachable and give each small effort an immediate, visible response. Instead of looking only at how much work remains, the player can see the progress they have already made.
 
 ## Screenshots
 
-All nine captures use the same **390 × 844** viewport and display at the same size. Click a picture to inspect it. The tasks and progress shown here are fictional demonstration data, separate from the classmate trial described in PROCESS.md.
+The nine screens below show the full journey, from creating a quest to looking back at a completed one. Each screenshot uses the same 390 × 844 viewport. Click an image to view it at full size. The tasks shown are fictional demonstration examples.
 
 <table>
 <tr>
@@ -39,64 +26,79 @@ All nine captures use the same **390 × 844** viewport and display at the same s
 </tr>
 </table>
 
-## Run locally
+## Product links
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/), clone or download this repository, and open a fresh terminal at its root:
+[Task Monster on GitHub](https://github.com/Whitter-oy/Task-monster-A3)
+
+After installing and starting the app, open [Task Monster locally](http://localhost:8501) in your browser. This address connects to the app running on your own computer.
+
+## Install and open
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run these commands in a terminal:
 
 ```bash
-cd task-monster
+git clone https://github.com/Whitter-oy/Task-monster-A3.git
+cd Task-monster-A3/task-monster
 uv sync --locked
 uv run --locked streamlit run app.py
 ```
 
-Open the URL printed in the terminal, normally **http://localhost:8501**. Keep the terminal open. Press **Ctrl+C** to stop. After updating a running copy, stop it, run the commands again, and refresh the browser.
+If you already have the repository, open a terminal in its `task-monster` folder and run the last two commands. Open the URL printed by Streamlit, normally **http://localhost:8501**. Keep the terminal open while using the app, and press **Ctrl+C** to stop it. After updating a running copy, stop it, start it again and refresh the browser.
 
-The app selects Python 3.13 through [.python-version](task-monster/.python-version). [pyproject.toml](task-monster/pyproject.toml) declares Streamlit and [uv.lock](task-monster/uv.lock) pins the dependency versions. Installing dependencies initially needs internet access. The running interaction uses bundled images/fonts and local sound synthesis; it needs no API key, paid account, model download, GPU or microphone. This is a local web app; no hosted live demo is provided.
+The project selects Python 3.13 and includes its dependency metadata and lockfile. Initial setup needs an internet connection to install dependencies. Images, fonts and sound are bundled or produced locally, so using the app does not require an API key, paid account, model download or microphone.
 
-## How to use it
+## Your quest, step by step
 
-1. Select **Summon**, name the quest, and optionally choose a date and type the hour/minute. Deadlines use Hong Kong time. Select a quest type or keep **Auto-detect**.
-2. Add at least two small actions. The gold **Summon monster** action unlocks above the step list. Red trash buttons remove draft steps.
-3. Enter a battle from **Quests**. Do the real-world action before marking it complete. Pending steps stay first; completed steps move below them in completion order.
-4. Use **Undo** for an accidental completion while the quest is active. To stop pursuing a quest, open **Quest options** and explicitly confirm **Abandon quest**.
-5. Finish every step to collect the monster. In **Collection**, choose **View quest** to revisit its steps and saved completion time.
+1. **Name the quest.** Select **Summon** and enter a real task, such as preparing a presentation. Choose a task type, or let **Auto-detect** select one. You can optionally choose a deadline date and type the hour and minute.
+2. **Make it smaller.** Add 2–24 concrete steps. The separate green **Add step** button builds the list; red trash buttons remove draft steps. Once there are at least two steps, the gold **Summon monster** button appears above the list.
+3. **Enter the battle.** Your quest appears on the board with its monster, health, progress and deadline. Choose **Enter battle**, then do one of the real-world actions before pressing **Complete & strike!**.
+4. **See the response.** Each completion removes 100 HP and adds 10 gems. The monster changes expression, gems fly toward the wallet and an optional sound marks the hit. Completed steps move below the pending ones so the next action stays easy to find.
+5. **Collect the victory.** Completing every step opens a celebration dialog. Close it to return to the quest board. The monster now appears in **Collection**, where **View quest** opens a recap of the steps and completion time.
 
-Use **Sound off** beside the gem wallet to enable music and effects together. Sound starts muted, pauses background music while the tab is hidden, and can be muted at any time. Reloading resets it to off. Health, text and animation communicate the outcome even without audio.
+The Back arrow returns to the previous screen. The three main navigation tiles switch between Quests, Summon and Collection. Use the sound switch beside the wallet to enable or mute music and effects together.
 
-## Classmate trial and iteration
+## Why I designed it this way
 
-Two classmates tried the app. One knew the assignment brief but received no explanation of this app; the other received a short introduction to its purpose. Both operated it smoothly. Their feedback informed the addition of optional deadlines and refinement of the monster artwork. [PROCESS.md](PROCESS.md#classmate-trial-and-response) records the trial context, feedback and design decisions without identifying participants.
+### A task becomes a monster
 
-## Mistakes, interruption and limitations
+A large task can feel abstract. Giving it a visible character and a health bar makes the remaining work easier to understand: every small action makes a clear difference. Health comes directly from the step list, with 100 HP per step, so the relationship between effort and progress stays simple.
 
-- Empty names or steps, fewer than two steps, and invalid deadline times produce an English message instead of creating an invalid quest.
-- Health and gems are derived from completed steps. Undo/re-completion cannot accumulate extra rewards, and collected quests cannot be attacked again.
-- Progress saves automatically to `task-monster/local_data/tasks.json`, which Git ignores. A missing save starts a new adventure. A malformed save is preserved with a warning instead of being overwritten. Stop the app and back up or repair that file before restarting. Writes use atomic replacement to avoid half-written JSON.
-- This is a single-user local prototype with one shared save per server. It has no accounts, cloud sync or concurrent-edit protection. Browsers connected to the same server share the save.
-- There are six species. Category detection uses local English keyword rules and can be overridden; it is not an AI service. All steps deal equal damage, and steps cannot be edited after summoning.
-- Deadlines are visual reminders, not notifications. The interface is a responsive web page with a phone-style frame, not a native mobile app.
+I chose friendly, rounded characters to keep the battle playful. Six species give different task types their own identity: Night Owl for Study, Clockwork Golem for Work, Ember Dragon for Fitness, Forest Sprout for Life, Muse Ghost for Creative and Stardust Slime for Other. Collection card colors follow each monster's palette, helping the character and its card feel like one design.
 
-## Verification and project files
+The monsters also react to progress. They begin cheerful, look hurt after a hit, and become visibly tired when their remaining health falls to 35% or less. Undo restores the expression that matches the restored health. Once collected, they return to their cheerful appearance. This gives the health change a more expressive counterpart than a number alone.
 
-From `task-monster`:
+### A small game world in the interface
 
-```bash
-uv run --locked python -m unittest discover -s tests -v
-```
+The deep purple background, warm cream lettering and gold highlights create a consistent game-like setting. Rounded cards, inset highlights and raised buttons make the controls feel tangible. I used Lilita One by Juan Montoreano for its friendly cartoon lettering; its [font license](task-monster/assets/fonts/OFL.txt) is included with the project.
 
-The current suite has **20 local checks** for creation, health/undo, rewards, victory, navigation, persistence, legacy saves, English calendar and keyboard deadlines. With Node.js installed, `node --test tests/audio.test.cjs` runs two optional audio checks. There is no GitHub automatic-check workflow.
+Color helps explain what to do. Green means add or complete an action, gold marks summoning and major continuation, purple supports Undo and Back, and red identifies removal. The phone-style layout keeps the experience compact, while the selected navigation tile gains a label to show where the player is. Battle screens use a Back arrow and focus on the quest itself.
 
-- [PROCESS.md](PROCESS.md): starting idea, iteration, classmate trial, AI tools and decisions.
-- [app.py](task-monster/app.py): screens and interaction callbacks.
-- [game.py](task-monster/game.py): task state, health, validation and JSON storage.
-- [deadline_picker.py](task-monster/deadline_picker.py): English calendar and keyboard time entry.
-- [art.py](task-monster/art.py) and [assets](task-monster/assets): local artwork, icons, font, sound and feedback.
-- [Development history](https://github.com/Whitter-oy/Task-monster-A3/commits/main/): actual commits made during the project.
+### Rewards that keep attention on the next step
 
-## Credits
+The gem animation connects a completed action to the wallet, making a small reward visible. The balance is calculated from completed steps, so undoing and repeating a step cannot build extra gems. Completed steps move to the bottom of the list, keeping unfinished work near the top.
 
-Python lists, dictionaries, functions, state and Streamlit build on SD5913 classroom concepts. The project extends those ideas with multiple quests, persistent progress, a battle/collection loop, deadlines and audiovisual feedback; it is not an unchanged tutorial example.
+Collection is a record of finished tasks. A victory dialog gives the final step a distinct moment, then returns the player to the board. The recap preserves the task's steps and completion time without presenting more battle controls.
 
-The project author supplied the six monster images and group portrait. Original source filenames and hashes are recorded in [SOURCES.json](task-monster/assets/monsters/SOURCES.json); the generation tool for those supplied originals was not recorded. OpenAI built-in image generation produced the hurt/weak variants from them, with [prompts retained](task-monster/assets/monsters/EXPRESSION-PROMPTS.json). Codex assisted with design, Python, CSS, original SVG icons, testing and documentation. It also composed the melody/effects and implemented Web Audio oscillator synthesis; no existing recordings or sampled music are bundled. [PROCESS.md](PROCESS.md#ai-tools-and-decisions) explains suggestions kept and changed.
+### Music and sound with a purpose
 
-Lilita One by Juan Montoreano is bundled under the [SIL Open Font License](task-monster/assets/fonts/OFL.txt). Reference game screenshots informed the visual direction; their assets were not copied. Personal task files and recordings of classmates are not included in the repository.
+The background melody supports the playful atmosphere, while navigation, summoning, attacks, gems, Undo and victory have different cues. An attack sound marks a step; the longer victory fanfare marks completion of the whole quest. This helps distinguish ordinary progress from finishing.
+
+The music and effects were composed with Codex assistance and synthesized using Web Audio oscillators. The app starts muted and uses one switch for all sound. Background music pauses when the tab is hidden, and visual feedback still explains what happened when sound is off. I wanted the audio to be an optional part of the experience that the player controls.
+
+### Deadlines without complicating creation
+
+Classmate feedback led me to add optional deadlines. A date and time can be set directly under Quest Name, and active cards show the deadline or an overdue label. Keeping it optional makes the same flow suitable for both a scheduled assignment and a personal task without a fixed due date. Dates use Hong Kong time; the calendar stays in English, and hours and minutes can be typed directly.
+
+## Mistakes
+
+An empty quest name or step produces a clear message. Summoning stays locked until two steps exist, and invalid hours or minutes cannot be saved as a deadline. These checks let the player correct the entry in place.
+
+If a step is completed accidentally, **Undo** restores the step, its health and the corresponding gem balance while the quest is active. Removing an entire quest is separate: **Quest options → Abandon quest** requires an explicit confirmation.
+
+Progress saves automatically. If a saved file cannot be read, the app warns the player and preserves it rather than replacing it with an empty list. The file can then be backed up or repaired before restarting. Personal progress stays in the Git-ignored `task-monster/local_data` folder.
+
+## User testing and improvements
+
+Two classmates tried Task Monster. The first studies in the same programme and knew the assignment requirements, but did not know this app's theme. I let them use it without explaining the app. The second received a short introduction to its purpose before trying it. Both operated it smoothly, and I did not observe a particular point where either became stuck.
+
+Their feedback suggested adding task deadlines and improving the monster imagery. In response, I added the optional date/time fields and deadline labels on the quest board, refined the character illustrations and group portrait, and introduced different expressions for different health states. I kept the main quest → step → battle → collection flow because both classmates could use it comfortably.

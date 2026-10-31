@@ -1,95 +1,95 @@
-# Task Monster — Development Process
+# Task Monster — Making the Experience
 
-[Return to the project overview and screenshots](README.md)
+## 1. Starting with an idea
 
-## Starting idea
+I began with a familiar situation: knowing that an assignment needs to be finished, but finding the whole task too large to start. I wanted to make the next small action feel clearer and more approachable.
 
-I wanted to make a small interactive experience for students who find a large assignment difficult to start. The intended action is simple: break the assignment into small steps, do one in real life, and mark it complete. The program should make that progress visible and make the next step clear.
+This became the idea behind Task Monster. A task becomes a monster, and each small step becomes an attack. The player's action should change something meaningful: the step becomes complete, the monster loses health and the player receives visible feedback. Finishing the whole task should feel different from finishing just one step.
 
-The first prototype was a checklist connected to a monster's health. It supported one task, adding/removing steps, completion, undo and victory. I kept the scope centered on this loop rather than adding a shop, accounts or unrelated game systems. The final app supports several quests, but each one uses the same interaction.
+I kept that loop at the center of the project. I considered the visual language of games, but left out shops, paid currency and accounts so that the experience would remain focused on doing real tasks.
 
-## Connecting an action to a response
+## 2. Building the first working loop
 
-The important state is a list of steps, each with a `done` flag. In [app.py](task-monster/app.py), a **Complete & strike!** button calls `attack(task_id, index)`. That function changes the selected step through `toggle_step`, saves progress and requests the corresponding visual/sound effect. The interface rerenders from the new state.
+I built on the Python lists, dictionaries and state concepts introduced in SD5913. The first prototype supported one task and a list of steps. I used Python dictionaries to store the task and a `done` flag for each step, then used Streamlit to display the controls and current state. Before developing the visual style, I made sure that adding steps, completing them, undoing them and reaching victory worked together.
 
-In [game.py](task-monster/game.py), health is calculated rather than independently reduced:
+An important decision was to calculate health from the checklist instead of keeping a separate health value:
 
 ```python
 maximum = len(task["steps"]) * 100
 remaining = maximum - completed_count(task) * 100
 ```
 
-For example, a four-step quest starts with 400 HP. One completed step leaves 300 HP and contributes 10 gems. Undo clears that step's flag, restoring the health and reversing its reward. The balance is derived from current completion flags, so repeatedly undoing/completing cannot farm gems.
+A four-step quest therefore starts with 400 HP. One completed step leaves 300 HP; Undo restores it to 400. The gem balance follows the same principle: it comes from the number of currently completed steps. This made the relationship between an action and its response easier to explain and kept the values consistent.
 
-The response is meaningful because it changes the saved checklist, health, reward balance, step order and eventual collection state. Feedback includes the health bar, completed-step text, gem animation, changed monster expression and optional sound. The final step stores the completion time, opens a victory dialog and adds the monster to Collection. Dismissing the dialog returns to the board; View quest then opens a read-only recap.
+The button callback in `app.py` finds the selected quest, changes the step through `toggle_step`, saves the result and requests a feedback effect. The interface then redraws from the new task state. Keeping the saved state separate from the animation helped prevent presentation effects from changing the actual rewards.
 
-## Classmate trial and response
+## 3. Developing the experience around the loop
 
-Two classmates tried the app. These notes summarize the trial and feedback I reported during development; no participant names or recordings are included.
+After the single-task prototype worked, I expanded it into a quest board, creation screen, battle screen and collection. Multiple quests made the app more useful for returning to unfinished work. I moved task calculations and JSON storage into `game.py`, while keeping the screens and callbacks in `app.py`.
 
-| Trial context | What I observed |
-| --- | --- |
-| The first classmate studies in the same programme. They knew the assignment requirements, but did not know this app's theme. I did not explain the app before they used it. | They could operate it smoothly without an interface walkthrough. This is the trial conducted without an app explanation. Their familiarity with the assignment is relevant context. |
-| The second classmate was unfamiliar with the app. I briefly introduced what it was for before they used it. | They also operated it smoothly. Because I had introduced the purpose, this trial is not presented as entirely unprompted. |
+I made the task breakdown part of creation: a new quest needs at least two steps before it can be summoned. Add step and Summon monster became separate actions with different colors and sizes. I placed the unlocked summon button above the step list so it would be easy to reach.
 
-Neither trial revealed a specific point where the classmate became stuck. These are qualitative observations; no timing measurements or step-by-step transcripts were recorded.
+The early monster drawings and simple panels then developed into a consistent purple-and-gold game interface. I refined the rounded lettering, raised buttons, navigation tiles, health bars and species-colored collection cards. The group portrait introduces the characters together, while each quest keeps its own monster.
 
-Their feedback suggested adding a way to set a task deadline and improving the monster imagery. I responded with two changes:
+I also developed the ending of the interaction. The last step opens a celebration dialog with a distinct sound. Closing it returns to the board, and the completed monster becomes a collection card. Opening that card shows a recap rather than an editable battle. This gives each quest a clear ending and leaves a record of what was completed.
 
-1. **Optional deadlines.** I added a date and time beneath Quest Name and a visible deadline on each active quest card. Overdue tasks receive a clear label. The field remains optional because not every personal task has a fixed due date. This adds time context without blocking the core checklist loop or adding a notification service.
-2. **Monster artwork and feedback.** I replaced the earlier simple character bodies with the supplied polished illustrations and group portrait. I then added hurt and weak expressions for all six species, linked to the same remaining-health calculation. This makes the game's progress more visible while preserving a consistent character identity.
+## 4. Problems I encountered and how I fixed them
 
-Because both classmates could use the interaction smoothly, I retained the main quest → step → battle → collection flow. The feedback led to focused additions and visual refinements rather than a redesign of the whole experience. The trial supports these design decisions; it does not establish long-term productivity benefits.
+### Progress needed to survive a restart
 
-## Main design and code iterations
+Session state was enough for the first prototype, but a returning user would need saved progress. I added local JSON storage and an atomic file replacement when saving. If loading fails, the app preserves the original file and displays a warning. This was more careful than silently replacing an unreadable save with an empty adventure.
 
-| Change | Reason and resulting behavior |
-| --- | --- |
-| Single task → multiple quests with local JSON storage | Users can return to unfinished work. The task model and storage logic were separated from the interface. |
-| At least two steps before summoning | The creation screen encourages breaking down a large task. A compact Add step action and a separate gold Summon action clarify their different purposes. |
-| Pending steps first; completed steps below | The next real-world action stays visible. Sorting preserves original step indices so moving a row does not change which step Undo affects. |
-| Completion dialog and read-only collection recap | A final action has an obvious outcome and a clear way back. Completed quests become records rather than editable battles. |
-| Optional deadlines and refined character imagery | These respond to classmate feedback, as described above. Deadlines are stored in UTC and displayed in Hong Kong time. |
-| English calendar and keyboard time fields | Browser-localized date controls initially displayed Chinese. Fixed English month/day names and direct hour/minute entry keep interface language consistent while preserving user-entered text. |
-| Responsive controls, aligned buttons and compact navigation | Screenshot reviews exposed low button lettering, excessive spacing and an oversized modal. The nested text alignment and both modal layers were corrected; narrow-screen layouts were checked. |
-| One Sound switch, off by default | A single control is sufficient for this small app. Muting does not remove visual feedback. |
+### Moving steps could target the wrong action
 
-The gem flight is presentation only; Python owns the actual balance. Sound events are deduplicated so a Streamlit rerender does not replay a reward. Reduced-motion preferences skip unnecessary motion. The running app uses no AI endpoint, paid service, microphone or external media host.
+I wanted completed steps to move below unfinished ones, keeping the next action near the top. Sorting the displayed rows introduced a risk: the row's visible position could differ from its original step index. I preserved the original indices when ordering the steps, so Complete and Undo continue to change the correct step after rows move.
 
-## Mistakes and interruption
+### Buttons looked centered in code but not on screen
 
-The creation flow rejects empty input and invalid hour/minute values. Removing draft steps can lock summoning again when fewer than two remain. Undo corrects an accidental completion while a quest is active; abandoning a quest requires a separate confirmation.
+Repeated screenshot reviews showed that labels such as Add step and Undo sat too low. Centering the outer button did not fix the nested text wrapper. I corrected the inner line box and added a small optical adjustment. Undo also needed an explicit button width so that positioning its label would not collapse the button itself. This taught me to inspect the rendered control rather than assume that one CSS alignment rule was enough.
 
-A missing save starts an empty adventure. Invalid JSON, unsupported data or malformed stored deadlines produce a warning and preserve the original file. Atomic file replacement reduces the risk of an interrupted write leaving incomplete JSON. Personal saves remain outside Git. The app is still a single-user prototype: concurrent users and cloud recovery are outside its scope.
+### Small screens exposed layout problems
 
-## AI tools and decisions
+Long content, navigation spacing and an oversized completion dialog were harder to judge from one screen size. The dialog's content was constrained, but its outer shell still retained a larger default width. I gave both layers matching viewport limits and allowed long content to scroll. I also checked the page and navigation at narrow phone widths and on desktop, leaving enough space to reach controls at the bottom.
 
-**Codex** assisted with idea development, planning, Python/Streamlit code, CSS, original SVG icons, local checks, browser verification and documentation. I reviewed the interface through repeated screenshots and requested changes to layout, controls, navigation, dates and artwork. This document includes my later report of the classmate trial; the agent did not observe those classmates itself.
+### The date picker followed the browser's language
 
-**Kept:** the suggestion to derive monster health and rewards from completed-step flags. It makes the interaction explainable and keeps Undo consistent. I also kept the core checklist/battle relationship because it directly communicates progress.
+After deadlines were introduced, the browser's native calendar displayed Chinese month and weekday labels. I replaced it with fixed English month/day names. The time fields later became direct keyboard inputs with quiet labels inside the boxes. I removed repeated timezone suffixes and tightened the spacing, while retaining consistent timezone conversion when saving dates.
 
-**Changed:** separate Music and SFX controls were initially implemented, then replaced with one Sound switch. The extra distinction added unnecessary interface weight. Initial runtime tilt/dimming was also replaced with actual hurt/weak artwork, because changes to expression communicate health more clearly.
+### Repeated rendering could repeat feedback
 
-**Rejected or deferred:** shops, paid currency, accounts and other game systems were left out because they distract from the task loop. Persistence was postponed in the first prototype until the core interaction worked, then added for returning users. Automatic sound playback was not used; playback requires a click. A custom GitHub check was briefly tried, then removed after I clarified that I did not want it; the real commit history remains.
+Streamlit redraws the interface after interactions. I kept sound playback on the parent page and used event identifiers so that a rerender would not replay a reward. Music begins only after a deliberate click and can be muted with one switch. The visual state remains understandable without audio.
 
-**Images:** I supplied the finished group portrait and six original monster images. Their generation tool was not recorded, so it is not attributed to a guessed model. OpenAI built-in image generation was used later to make two expression variants per species, preserving the supplied designs. The transparent results were inspected, split into individual frames and converted to WebP. [SOURCES.json](task-monster/assets/monsters/SOURCES.json) and [EXPRESSION-PROMPTS.json](task-monster/assets/monsters/EXPRESSION-PROMPTS.json) record the available provenance and prompts.
+## 5. Trying it with classmates and responding to feedback
 
-**Sound:** Codex composed an original eight-bar melody and short navigation, attack, gem, undo and victory cues, implemented with Web Audio oscillators. This is AI-assisted composition and code synthesis, not an audio file generated by a dedicated music model. No sampled music or recordings of other people were used.
+Two classmates tried the app. The first studies in the same programme and knew the assignment requirements, but did not know the app's theme. I did not explain the app before they used it. The second was unfamiliar with it, so I briefly introduced its purpose before they tried it.
 
-## Verification and evidence
+Both operated the app smoothly. I did not observe a specific place where either became stuck. The first trial therefore gave me a useful check of the interface without an app walkthrough; the second showed how someone used it after a brief introduction. These were qualitative observations, with no timing measurements or recorded transcript.
 
-The current local Python/AppTest suite has 20 passing checks. It covers input validation, multiple quests, health and Undo, reward consistency, final-step collection, read-only recap, navigation, save/reload, malformed files, legacy data, English calendar behavior, leap days and keyboard deadline validation. Two optional Node checks cover the audio engine. These implementation checks are separate from the classmate trial.
+Their feedback suggested setting deadlines for tasks and improving the monster imagery. I responded in two ways:
 
-Browser verification exercised creation, completion, Undo, the victory dialog and collection. Earlier layout checks included 320px and 390px phone widths and a 1280px desktop viewport. The README now uses nine uniform 390×844 screenshots from an isolated fictional save; these are product demonstrations, not screenshots of classmates' private tasks.
+- **Added optional deadlines.** I placed the date/time controls beneath Quest Name and showed the chosen deadline on each active card. Overdue labels make time context visible. The field remains optional so that a small personal task does not require an artificial due date.
+- **Refined the monsters.** I replaced the simpler character bodies with the supplied polished illustrations and group portrait. I then added hurt and weak expressions for all six species, connected to their remaining health. This gives progress a visible emotional change as well as a numerical one.
 
-The [README run commands](README.md#run-locally) use the committed dependency metadata and lockfile. The working interaction is available locally without a remote model or media service. Public access was checked with an unauthenticated request: the repository returned its project page and Public badge. Local links to source, screenshots and credits were also checked.
+I retained the main quest → step → battle → collection structure because both classmates could use it smoothly. The feedback helped me make focused improvements without adding another complex system. Names, personal tasks and recordings of the classmates are not included in the project.
 
-## Credits and development history
+## 6. What I learned
 
-The project builds on SD5913 classroom concepts: Python lists and dictionaries, functions, state and Streamlit interaction. It extends those foundations with the quest model, persistence, health/reward calculations, collection, deadlines and custom presentation rather than submitting an unchanged course example.
+The main lesson for me is that a small interaction needs both dependable logic and carefully timed feedback. A health bar, expression and sound can support the same action, but they only make sense when they all come from consistent task state. Deriving health and gems from the checklist made Undo much easier to manage.
 
-Monster originals were supplied by the project author; source filenames and hashes are retained. Reference game screenshots informed the design direction, but their assets were not copied. Navigation and feedback icons are original code-drawn SVGs. Lilita One by Juan Montoreano is bundled with its [SIL Open Font License](task-monster/assets/fonts/OFL.txt).
+I also learned that visual polish can be functional. A separate summon action, a clearer button label or pending steps staying at the top can make the next action easier to understand. Small spacing and alignment problems become much more noticeable on a phone-sized interface. Looking at the rendered result at different widths was more useful than judging the code alone.
 
-The [commit history](https://github.com/Whitter-oy/Task-monster-A3/commits/main/) records actual revisions. For example, [0308ad4](https://github.com/Whitter-oy/Task-monster-A3/commit/0308ad4a082fa6bdfeddb41ee6e96867125ab561) added English deadline controls and expressive health states, and [6c13c4b](https://github.com/Whitter-oy/Task-monster-A3/commit/6c13c4b03e835acae5987a8288a70a4f35a4dfe4) tightened the keyboard time fields. Earlier process notes remain available through Git history; this root document reorganizes them for assessment rather than inventing a new development timeline.
+The classmate trials helped me distinguish between a flow that needed changing and a feature that could improve it. Both people could use the flow, so I kept its structure and used the feedback to add deadlines and strengthen the character feedback. I would need a longer trial to understand whether the app actually helps someone return to tasks over time; smooth operation alone does not establish that outcome.
 
-Before submitting the repository URL on Canvas, I still need to make the final submission myself. Personal information, API keys, local saves and recordings of classmates must stay outside the public repository.
+Finally, I became more aware of the difference between testing the implementation and observing a person. The 20 local Python checks and two sound checks cover repeatable behavior such as input validation, Undo, saving and calendar entry. They complement the classmate observations, but answer different questions. The screenshots use a separate fictional save so that documenting the product does not expose anyone's real tasks.
+
+## 7. How I used AI
+
+I used **Codex** to help develop the idea, plan the interaction, write and refactor Python/Streamlit code, refine CSS and original SVG icons, run checks, inspect the browser result and draft documentation. I reviewed the outputs through screenshots and requested specific changes to layout, navigation, button alignment, dates, sound and artwork. The classmate trial details in this document came from my own report; the agent did not observe those sessions.
+
+One suggestion I kept was deriving health and rewards from completion flags. It supported the intended interaction and made the result easier to reason about. I also kept the small checklist/battle loop as the core of the experience.
+
+Some suggestions changed during iteration. Separate Music and SFX controls became one Sound switch because the extra distinction took up space without helping this small app. Simple tilt and dimming effects later became actual hurt/weak illustrations because facial expressions communicated health more clearly. I deferred persistence until the first loop worked, then added it when the app grew into multiple quests. Shops, paid currency and automatic audio playback were left out to keep attention on tasks and preserve control over sound.
+
+For images, I supplied the finished monster originals and group portrait. The generation tool for those original files was not recorded. OpenAI built-in image generation later produced two expression variants per species while preserving the supplied character designs. I inspected the results before they were split into separate transparent WebP assets. The available image provenance and prompts remain in [SOURCES.json](task-monster/assets/monsters/SOURCES.json) and [EXPRESSION-PROMPTS.json](task-monster/assets/monsters/EXPRESSION-PROMPTS.json).
+
+For sound, Codex composed an original eight-bar melody and short interaction cues, then implemented them with Web Audio oscillators. This was AI-assisted composition and code synthesis, rather than a recording produced by a dedicated music-generation model. The runtime app does not call an AI service. AI helped me build and revise the experience, while the decisions about what to keep were guided by the task loop, my reviews and the classmates' feedback.
