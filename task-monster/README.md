@@ -1,71 +1,22 @@
-# Task Monster · Quest Adventure
+# Task Monster — App Directory
 
-A game-inspired task tool for students who need help starting large tasks. A task becomes a monster, its steps become attacks, and a completed task becomes a collectible card.
+The full project overview, interaction guide, consistent screenshot gallery, limitations and credits are in the **[repository README](../README.md)**. The starting idea, classmate trial, design changes and AI-tool decisions are in **[PROCESS.md at the repository root](../PROCESS.md)**.
 
-## Run
-
-Open a terminal in this directory:
+## Run from this directory
 
 ```bash
 uv sync --locked
-uv run streamlit run app.py
+uv run --locked streamlit run app.py
 ```
 
-Open the URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C to stop. To update a running app, stop it, run the commands again, and refresh the browser. Python 3.13 is selected in `.python-version`; `uv.lock` records dependencies.
+Open the local URL printed by Streamlit, normally http://localhost:8501. Press Ctrl+C to stop. Python 3.13 is selected by `.python-version`; `pyproject.toml` and `uv.lock` document dependencies.
 
-## Play
-
-- **Quests:** browse active monsters, level, health and progress, then select **Enter battle**.
-- **Summon:** name a task, optionally choose its deadline in Hong Kong time, choose a type or **Auto-detect**, and add at least two steps. The small green Add step action is separate from the gold Summon monster action. Red trash buttons remove draft steps. The monster stays a surprise until summoning.
-- **Level and health:** a quest has 2–24 steps. Each step adds one level and 100 HP.
-- **Battle:** finish a step in real life, then choose **Complete & strike!**. Health and progress update with visual feedback. Each completed step awards 10 purple gems; a short animation sends gems to the wallet. Actual expression artwork changes from healthy to hurt after the first hit, then weak at 35% HP or less. Undo restores the matching expression; collected monsters return to their cheerful artwork. Completed steps move to the bottom in completion order. Undo is available while a quest is active. The last step opens a celebration dialog with a special victory cue; closing it returns home.
-- **Collection:** completed quests appear as cards. The **View quest** button below each card opens a read-only recap with its completion time in Hong Kong time, without health or editing controls.
-- **Abandon:** expand **Quest options**, confirm the checkbox, and remove only that quest.
-
-## Screenshots
-
-Fictional demonstration tasks, not records of user testing:
-
-<img src="assets/screenshots/home.jpg" width="220" alt="Quest board" /> <img src="assets/screenshots/battle.jpg" width="220" alt="Monster battle" /> <img src="assets/screenshots/gallery.jpg" width="220" alt="Monster collection" />
-
-[Creation page](assets/screenshots/create.jpg) · [Grouped steps and sound switch](assets/screenshots/steps.jpg) · [Victory](assets/screenshots/victory.jpg) · [Read-only recap](assets/screenshots/review.jpg).
-
-[Active-card deadlines](assets/screenshots/deadlines.jpg), [English calendar](assets/screenshots/calendar.jpg).
-
-## Deadlines
-
-The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed in Hong Kong time on active quest cards, without a timezone suffix. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. The custom calendar uses fixed English month and weekday names. Hours and minutes are entered with the keyboard, with quiet labels inside the fields. The date and time controls do not depend on the browser locale. Deadline labels and values share one row.
-
-## Sound
-
-Use **Sound off** beside the wallet to enable background music and effects together. The game starts muted. Sound continues through page changes; use the same switch to mute everything. Reloading resets sound to off. Background music pauses while the tab is hidden. Visual feedback remains usable without sound or Web Audio support.
-
-The original eight-bar, 112 BPM C-major melody and effects were composed by Codex and rendered procedurally with the browser's Web Audio oscillators. This is AI-assisted composition and code synthesis, not output from a music-generation model or an external music service. No account, recording, microphone or paid service is needed. Navigation, summoning, damage, gems, undo and victory use distinct cues. See `assets/audio.js` in the app folder for the score and synthesis.
-
-## Storage and errors
-
-Tasks save automatically to `local_data/tasks.json`, which is ignored by Git. Reopening reads this file. Legacy category identifiers are converted to English without changing user-entered text.
-
-Empty input and too many steps produce messages. An unreadable or unsupported save is preserved. Stop the app, back up the file, repair or move it, then restart and refresh. If writing fails, the current session can continue with a warning. Atomic replacement avoids incomplete JSON after interrupted saves.
-
-## Limitations
-
-This is a single-user local prototype with one shared save per server, not a public multi-user service. There are no accounts, cloud sync or concurrent-edit protection. Quest types select six species using the supplied artwork. Classification uses local rules, not AI, and can be overridden manually. Steps cannot be edited after summoning. Damage is equal per step, completion is self-reported, and the gem balance is completed steps × 10. Undoing a step or abandoning its quest reverses the corresponding rewards.
-
-Active quests, creation steps and battle steps are each grouped in a single framed panel. Completed monsters remain in Collection; the final step opens a dismissible celebration dialog, followed by a return to the quest board.
-
-The responsive web interface has a 460px phone frame, aligned square navigation tiles and space below long content. It is not a native app. Navigation bounce, monster motion and reward flights respect reduced-motion preferences. The three-column collection uses framed artwork, level stars and labelled View quest actions. The dock appears on the three primary screens; battles have a game-style Back arrow that returns to the screen they were opened from.
-
-## Optional local checks
+## Optional local verification
 
 ```bash
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-Tests cover multiple tasks, damage, undo, collection, persistence, invalid saves and legacy migration. No GitHub automatic-check workflow is configured. With Node.js installed, audio scheduling checks can also be run using `node --test tests/audio.test.cjs`. Tests do not replace a real user trial.
+With Node.js installed, `node --test tests/audio.test.cjs` runs the optional sound checks. There is no GitHub automatic-check workflow.
 
-## Credits and next steps
-
-The project builds on SD5913 concepts: lists/dictionaries, functions, state, Streamlit and JSON. Monster images and the group portrait were supplied by the project author; assets/monsters/SOURCES.json records their source filenames and hashes. Hurt and weak expression variants were created with OpenAI built-in image generation using the supplied designs; prompts are recorded in assets/monsters/EXPRESSION-PROMPTS.json. `art.py` renders those images and original SVG navigation/feedback icons; Lilita One by Juan Montoreano is bundled under the SIL Open Font License (see assets/fonts/OFL.txt). Reference game screenshots informed style, but their assets were not copied. Codex assisted with design, code, verification and documentation; see PROCESS.md.
-
-Before submission, complete a real trial with another person, record the observation and design decision, follow the run instructions from a fresh terminal, and verify signed-out access to the public repository.
+Personal progress is stored in `local_data/tasks.json`, which is ignored by Git. This is a single-user local prototype, not a shared hosted service. See the [main README](../README.md#mistakes-interruption-and-limitations) for error recovery and limitations.
