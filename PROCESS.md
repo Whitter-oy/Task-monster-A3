@@ -82,6 +82,8 @@ The classmate trials helped me distinguish between a flow that needed changing a
 
 Finally, I became more aware of the difference between testing the implementation and observing a person. The 20 local Python checks and two sound checks cover repeatable behavior such as input validation, Undo, saving and calendar entry. They complement the classmate observations, but answer different questions. The screenshots use a separate fictional save so that documenting the product does not expose anyone's real tasks.
 
+For the final submission check, the public ZIP was downloaded without a GitHub login and compared with the published source. Locked dependencies installed successfully into a fresh environment from an empty package cache. The downloaded app passed all 20 Python checks and two sound checks, and its browser flow was exercised from empty input through creation, Undo, reload, victory and collection. This runtime check used macOS and a Chromium browser. Dependency dry runs also resolved for Windows 64-bit and Linux 64-bit; those systems were not tested on actual machines. I added a ZIP-download alternative and a short explanation of the local, single-user setup to make the opening instructions clearer.
+
 ## 7. How I used AI
 
 I used **Codex** to help develop the idea, plan the interaction, write and refactor Python/Streamlit code, refine CSS and original SVG icons, run checks, inspect the browser result and draft documentation. I reviewed the outputs through screenshots and requested specific changes to layout, navigation, button alignment, dates, sound and artwork. The classmate trial details in this document came from my own report; the agent did not observe those sessions.

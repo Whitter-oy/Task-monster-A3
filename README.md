@@ -43,9 +43,11 @@ uv sync --locked
 uv run --locked streamlit run app.py
 ```
 
-If you already have the repository, open a terminal in its `task-monster` folder and run the last two commands. Open the URL printed by Streamlit, normally **http://localhost:8501**. Keep the terminal open while using the app, and press **Ctrl+C** to stop it. After updating a running copy, stop it, start it again and refresh the browser.
+Cloning uses Git. If Git is not installed, choose **Code → Download ZIP** on this repository, extract it, open a terminal in the extracted `task-monster` folder, and run the last two commands instead. If you already have the repository, use its `task-monster` folder. Open the URL printed by Streamlit, normally **http://localhost:8501**. Keep the terminal open while using the app, and press **Ctrl+C** to stop it. After updating a running copy, stop it, start it again and refresh the browser.
 
 The project selects Python 3.13 and includes its dependency metadata and lockfile. Initial setup needs an internet connection to install dependencies. Images, fonts and sound are bundled or produced locally, so using the app does not require an API key, paid account, model download or microphone.
+
+This is a single-user local prototype: each running server uses one save file, with no accounts or cloud sync. Task completion is self-reported, and deadlines are displayed reminders rather than notifications.
 
 ## Your quest, step by step
 
