@@ -371,3 +371,13 @@ button:disabled { opacity:.5; filter:grayscale(.6); }
 /* Keep the inward-shifted portrait clear of the words on narrow phones. */
 @media(max-width:420px){.hero h2{font-size:20px}.hero p{font-size:11px;max-width:51%}}
 @media(max-width:360px){.hero-group{right:-5px}.hero h2{font-size:18px}.hero p{max-width:49%;font-size:10px}}
+
+/* Compact deadline row, with quiet labels inside keyboard-only time fields. */
+.st-key-deadline_picker { gap:7px !important; }
+.st-key-deadline_picker>[data-testid="stHorizontalBlock"] { align-items:center !important; }
+.st-key-deadline_hour_field,.st-key-deadline_minute_field { position:relative; }
+.st-key-deadline_hour_field::before,.st-key-deadline_minute_field::before { position:absolute; top:4px; left:12px; z-index:1; color:#b9aecb; font:400 10px GameFont,sans-serif; line-height:1; pointer-events:none; }
+.st-key-deadline_hour_field::before { content:"Hour"; }
+.st-key-deadline_minute_field::before { content:"Min"; }
+.st-key-deadline_hour_field [data-baseweb="input"],.st-key-deadline_minute_field [data-baseweb="input"] { height:40px; border-radius:9px; }
+.st-key-deadline_hour_field input,.st-key-deadline_minute_field input { height:40px; box-sizing:border-box; padding:13px 12px 3px !important; font-size:13px; line-height:1; }

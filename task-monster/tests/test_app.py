@@ -90,7 +90,7 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertEqual(self.app.session_state["page"], "review")
         self.assertFalse(any(b.label in ("Undo", "Abandon quest", "Complete & strike!") for b in self.app.button))
         self.assertFalse(any('<div class="battle-hp"' in m.value for m in self.app.markdown))
-        self.assertTrue(any("HKT" in m.value for m in self.app.markdown))
+        self.assertFalse(any("HKT" in m.value for m in self.app.markdown))
         self.button("back_to_quests")
         self.assertEqual(self.app.session_state["page"], "gallery")
 
@@ -214,8 +214,8 @@ class TaskMonsterTests(unittest.TestCase):
         self.app.selectbox(key="deadline_month").select("November").run()
         self.app.number_input(key="deadline_year").set_value(2026).run()
         self.button("deadline_day_2026_11_1")
-        self.app.selectbox(key="deadline_hour").select(23).run()
-        self.app.selectbox(key="deadline_minute").select(59).run()
+        self.app.text_input(key="deadline_hour_text").set_value("23").run()
+        self.app.text_input(key="deadline_minute_text").set_value("59").run()
         for step in ("Draft the slides", "Rehearse"):
             next(f for f in self.app.text_input if f.label == "Add a small step").set_value(step)
             self.click("Add step")
@@ -226,6 +226,26 @@ class TaskMonsterTests(unittest.TestCase):
         self.assertEqual(load_tasks(self.file)[0][0]["due_at"],task["due_at"])
         self.button("nav_home")
         self.assertTrue(any("01 Nov 2026 · 23:59" in m.value for m in self.app.markdown))
+
+    def test_keyboard_deadline_rejects_invalid_time_without_saving(self):
+        self.button("nav_create")
+        self.app.text_input(key="new_title").set_value("Plan tomorrow").run()
+        self.app.selectbox(key="deadline_month").select("November").run()
+        self.app.number_input(key="deadline_year").set_value(2026).run()
+        self.button("deadline_day_2026_11_1")
+        for step in ("Plan", "Review"):
+            next(f for f in self.app.text_input if f.label == "Add a small step").set_value(step)
+            self.click("Add step")
+        for hour, minute in (("24", "00"), ("23", "60"), ("", "30"), ("ab", "15")):
+            self.app.text_input(key="deadline_hour_text").set_value(hour)
+            self.app.text_input(key="deadline_minute_text").set_value(minute)
+            self.click("Summon monster")
+            self.assertIn("Enter an hour", self.app.warning[0].value)
+            self.assertEqual(self.app.session_state["tasks"], [])
+        self.app.text_input(key="deadline_hour_text").set_value("9")
+        self.app.text_input(key="deadline_minute_text").set_value("05")
+        self.click("Summon monster")
+        self.assertEqual(self.app.session_state["tasks"][0]["due_at"], "2026-11-01T01:05:00+00:00")
 
     def test_english_calendar_handles_leap_day_and_clear(self):
         self.button("nav_create")

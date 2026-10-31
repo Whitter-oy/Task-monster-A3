@@ -43,7 +43,7 @@ The interface stays within a 460px phone-style frame on desktop and adapts to na
 
 ## Deadlines
 
-The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed in Hong Kong time on active quest cards, without a timezone suffix. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. The custom calendar uses fixed English month and weekday names. The date, hour and minute controls do not depend on the browser locale. Deadline labels and values share one row.
+The optional date and time controls sit below Quest Name. Deadlines are saved in UTC and displayed in Hong Kong time on active quest cards, without a timezone suffix. Past deadlines are allowed and labelled OVERDUE. Existing tasks without a deadline show No deadline set; they are not assigned an invented date. The custom calendar uses fixed English month and weekday names. Hours and minutes are entered with the keyboard, with quiet labels inside the fields. The date and time controls do not depend on the browser locale. Deadline labels and values share one row.
 
 ## Sound
 

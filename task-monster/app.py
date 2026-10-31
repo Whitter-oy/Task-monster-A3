@@ -156,7 +156,7 @@ elif page == "create":
             if st.button("Summon monster", key="summon_button", type="primary", use_container_width=True):
                 try:
                     if due_date and due_time is None:
-                        raise ValueError("Choose a deadline time, or clear the deadline date.")
+                        raise ValueError("Enter an hour from 00 to 23 and minutes from 00 to 59, or clear the deadline date.")
                     due_at = datetime.combine(due_date, due_time, tzinfo=ZoneInfo("Asia/Hong_Kong")).isoformat() if due_date else None
                     task = create_task(title, st.session_state.draft, category, due_at=due_at)
                 except ValueError as error:
@@ -199,7 +199,7 @@ elif page in ("battle", "review"):
         st.session_state.notice = None
     if reviewing:
         try:
-            completed = datetime.fromisoformat(task.get("completed_at") or "").astimezone(ZoneInfo("Asia/Hong_Kong")).strftime("%d %b %Y · %H:%M HKT")
+            completed = datetime.fromisoformat(task.get("completed_at") or "").astimezone(ZoneInfo("Asia/Hong_Kong")).strftime("%d %b %Y · %H:%M")
         except (ValueError, TypeError):
             completed = "Time unavailable for this older quest"
         markup(f'<div class="completion-date"><small>QUEST COMPLETED</small><strong>{esc(completed)}</strong></div>')

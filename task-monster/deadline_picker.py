@@ -16,6 +16,17 @@ def clear_date():
     st.session_state.new_due_date = None
 
 
+def keyboard_time(hour, minute):
+    """Accept keyboard digits only; invalid input never silently changes a deadline."""
+    hour, minute = hour.strip(), minute.strip()
+    if not all(value.isascii() and value.isdigit() for value in (hour, minute)):
+        return None
+    try:
+        return time(int(hour), int(minute))
+    except ValueError:
+        return None
+
+
 def deadline_picker():
     selected = st.session_state.get("new_due_date")
     today = date.today()
@@ -41,8 +52,9 @@ def deadline_picker():
                             column.button(str(day), key=f"deadline_day_{year}_{month}_{day}", type="primary" if selected == date(year, month, day) else "secondary", use_container_width=True, on_click=choose_date, args=(year, month, day))
                 st.button("Clear date", key="clear_deadline", on_click=clear_date, use_container_width=True)
         with hour_column:
-            hour = st.selectbox("Hour", range(24), index=23, format_func=lambda value: f"{value:02d}", key="deadline_hour")
+            with st.container(key="deadline_hour_field"):
+                hour = st.text_input("Hour", value="23", max_chars=2, placeholder="00–23", label_visibility="collapsed", key="deadline_hour_text", autocomplete="off")
         with minute_column:
-            minute = st.selectbox("Minute", range(60), index=59, format_func=lambda value: f"{value:02d}", key="deadline_minute")
-        st.caption("Hong Kong time · 24-hour clock")
-    return st.session_state.get("new_due_date"), time(hour, minute)
+            with st.container(key="deadline_minute_field"):
+                minute = st.text_input("Minute", value="59", max_chars=2, placeholder="00–59", label_visibility="collapsed", key="deadline_minute_text", autocomplete="off")
+    return st.session_state.get("new_due_date"), keyboard_time(hour, minute)

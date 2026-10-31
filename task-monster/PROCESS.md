@@ -131,6 +131,12 @@ OpenAI built-in image generation produced a two-frame transparent expression she
 
 Nineteen Python/AppTest checks passed, including all species/state selections, undo restoration, English controls, leap-day selection, clearing the date, UTC persistence and legacy saves. Browser checks exercised healthy → hurt → weak → undo transitions, measured Undo at 48×36px with its text center one pixel above the button center, and verified English calendar selection at 390×844 and 320×568. The narrow calendar scrolls internally to reach its lower rows. Screenshots use isolated fictional data; no independent user trial is claimed.
 
+## Compact keyboard time entry
+
+The author requested removal of the completion timestamp's HKT suffix and the deadline helper line. The underlying Hong Kong timezone conversion remains consistent. Hours and minutes now use keyboard text fields with accessible names, faint internal labels and no dropdown or numeric spinner. The deadline title and its three controls sit closer together. Invalid, missing or out-of-range time digits prevent summoning a dated quest instead of silently saving another time; undated quests remain optional.
+
+Twenty Python/AppTest checks passed, including valid keyboard entry, rejected 24-hour/60-minute values, blank/non-numeric input, UTC persistence and completion display without HKT. Browser inspection confirmed aligned 40px controls, direct keyboard input and the revised completion recap. Updated screenshots use fictional demonstration tasks only.
+
 ## User trial — still to complete
 
 Ask another person to create a quest and complete a step before explaining how the app works. Record the real observation and decision without identifying them.
