@@ -4,6 +4,18 @@
 
 I designed it for students who know what they need to do but find a large assignment difficult to start. The goal is to make the next action feel approachable and give each small effort an immediate, visible response. Instead of looking only at how much work remains, the player can see the progress they have already made.
 
+## Project at a glance
+
+| | |
+| --- | --- |
+| **Format** | Functional, single-user web application developed as coursework |
+| **Technology** | Python, Streamlit, CSS, JavaScript, Web Audio and local JSON storage |
+| **Design focus** | Task breakdown, visible progress, expressive feedback and mobile-sized interaction flows |
+| **Evaluation** | Qualitative trials with two classmates, followed by deadline and character-feedback improvements |
+| **AI-assisted development** | Codex supported implementation and iteration. The running app does not call an AI service. |
+
+[Build and design process](PROCESS.md) · [How I used AI](PROCESS.md#7-how-i-used-ai) · [Install and run](#install-and-open)
+
 ## Screenshots
 
 The nine screens below show the full journey, from creating a quest to looking back at a completed one. Each screenshot uses the same 390 × 844 viewport. Click an image to view it at full size. The tasks shown are fictional demonstration examples.
